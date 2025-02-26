@@ -9,7 +9,7 @@ jobs:
       - image: cimg/node:22.14.0
     steps:
       - checkout
-      - node/install-packages        
+      - node/install-packages
       - run:
           name: Lint
           command: npm run lint
