@@ -1,4 +1,4 @@
-import Cookies from './cookies';
+import { destroyCookie, generateId, getBrowserInfo, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, setCookie } from './helpers';
 
 const config = {
   urlPrefix: "https://staging.edulib.fr",
@@ -18,14 +18,84 @@ const config = {
   visitorDuration: 2 * 365 * 24 * 60 // default 2 years
 };
 
+
+
+/** 
+ * -------------------------- Old public functions ----------------------------------
+ */
+
+
+// eslint-disable-next-line no-unused-vars
+function reset() {
+  destroyCookie("ahoy_visit");
+  destroyCookie("ahoy_visitor");
+  destroyCookie("ahoy_events");
+  destroyCookie("ahoy_track");
+  return true;
+};
+
+// eslint-disable-next-line no-unused-vars
+function debug(enabled) {
+  if (enabled === false) {
+    destroyCookie("ahoy_debug");
+  } else {
+    setCookie("ahoy_debug", "t", 365 * 24 * 60); // 1 year
+  }
+  return true;
+};
+
+// eslint-disable-next-line no-unused-vars
+function trackClicks(selector) {
+  if (selector === undefined) {
+    throw new Error("Missing selector");
+  }
+  onEvent("click", selector, function (e) {
+    const properties = eventProperties.call(this, e);
+    properties.text = properties.tag === "input" ? this.value : (this.textContent || this.innerText || this.innerHTML).replace(/[\s\r\n]+/g, " ").trim();
+    properties.href = this.href;
+    ahoy.track("$click", properties);
+  });
+};
+
+// eslint-disable-next-line no-unused-vars
+function trackSubmits(selector) {
+  if (selector === undefined) {
+    throw new Error("Missing selector");
+  }
+  onEvent("submit", selector, function (e) {
+    const properties = eventProperties.call(this, e);
+    ahoy.track("$submit", properties);
+  });
+};
+
+// eslint-disable-next-line no-unused-vars
+function trackChanges(selector) {
+  log("trackChanges is deprecated and will be removed in 0.5.0");
+  if (selector === undefined) {
+    throw new Error("Missing selector");
+  }
+  onEvent("change", selector, function (e) {
+    const properties = eventProperties.call(this, e);
+    ahoy.track("$change", properties);
+  });
+};
+
+/**
+ * -------------------------------------------------------
+ */
+
 const ahoy = window.ahoy || window.Ahoy || {};
 
-ahoy.configure = function (options) {
-  for (const key in options) {
-    if (Object.prototype.hasOwnProperty.call(options, key)) {
-      config[key] = options[key];
-    }
+ahoy.configure = function (apiKey) {
+  if (!apiKey) {
+    console.error("Erreur: l'argument api_key est requis.");
+    return;
   }
+  if (typeof apiKey !== 'string') {
+    console.error("Erreur: l'argument api_key doit être une chaine de caractère");
+    return;
+  }
+  config.apiKey = apiKey;
 };
 
 // legacy
@@ -52,36 +122,6 @@ function isEmpty(obj) {
 
 function canTrackNow() {
   return (config.useBeacon || config.trackNow) && isEmpty(config.headers) && canStringify && typeof (window.navigator.sendBeacon) !== "undefined" && !config.withCredentials;
-}
-
-function serialize(object) {
-  const data = new FormData();
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key)) {
-      data.append(key, object[key]);
-    }
-  }
-  return data;
-}
-
-// cookies
-
-function setCookie(name, value, ttl) {
-  Cookies.set(name, value, ttl, config.cookieDomain || config.domain);
-}
-
-function getCookie(name) {
-  return Cookies.get(name);
-}
-
-function destroyCookie(name) {
-  Cookies.set(name, "", -1);
-}
-
-function log(message) {
-  if (getCookie("ahoy_debug")) {
-    window.console.log(message);
-  }
 }
 
 function setReady() {
@@ -140,19 +180,6 @@ function documentReady(callback) {
   } else {
     document.addEventListener("DOMContentLoaded", callback);
   }
-}
-
-// https://stackoverflow.com/a/2117523/1177228
-function generateId() {
-  if (window.crypto && window.crypto.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
 }
 
 function saveEventQueue() {
@@ -262,7 +289,6 @@ function trackEventNow(event) {
     data.user_type = "student";
     delete data.events;
     delete data.visitor_token;
-    //data.visit_token;
     fetch(eventsUrl(), {
       method: "POST",
       headers: {
@@ -315,68 +341,6 @@ function getClosest(element, attribute) {
   }
 
   return null;
-}
-
-function getBrowserInfo() {
-  const userAgent = navigator.userAgent;
-  let browser = "Unknown";
-  if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edge") === -1) {
-    browser = "Chrome";
-  } else if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) {
-    browser = "Safari";
-  } else if (userAgent.indexOf("Firefox") > -1) {
-    browser = "Firefox";
-  } else if (userAgent.indexOf("Edge") > -1) {
-    browser = "Edge";
-  } else if (userAgent.indexOf("MSIE") > -1 || !!document.documentMode) {
-    browser = "Internet Explorer";
-  }
-  return browser;
-}
-
-function getOSAndVersion() {
-  const userAgent = navigator.userAgent;
-  let os = "Unknown";
-  let version = "Unknown";
-
-  if (userAgent.indexOf("Win") > -1) {
-    os = "Windows";
-    const match = userAgent.match(/Windows NT ([0-9.]+)/);
-    if (match && match[1]) {
-      version = match[1];
-    }
-  } else if (userAgent.indexOf("Mac") > -1) {
-    os = "MacOS";
-    const match = userAgent.match(/Mac OS X ([0-9_]+)/);
-    if (match && match[1]) {
-      version = match[1].replace(/_/g, '.');
-    }
-  } else if (userAgent.indexOf("X11") > -1) {
-    os = "UNIX";
-  } else if (userAgent.indexOf("Linux") > -1) {
-    os = "Linux";
-  }
-
-  return { os, version };
-}
-
-function getDeviceType() {
-  const userAgent = navigator.userAgent;
-  return /Mobi|Android/i.test(userAgent) ? "Mobile" : "Desktop";
-}
-
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
-function getDomainFromUrl(url) {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.hostname;
-  } catch (e) {
-    return null;
-  }
 }
 
 function createVisit() {
@@ -436,12 +400,6 @@ function createVisit() {
       data.utm_source = getQueryParam('utm_source');
       data.utm_term = getQueryParam('utm_term');
 
-      for (const key in config.visitParams) {
-        if (Object.prototype.hasOwnProperty.call(config.visitParams, key)) {
-          data[key] = config.visitParams[key];
-        }
-      }
-
       log(data);
 
       sendRequest(visitsUrl(), data, function () {
@@ -462,23 +420,6 @@ ahoy.getVisitId = ahoy.getVisitToken = function () {
 
 ahoy.getVisitorId = ahoy.getVisitorToken = function () {
   return getCookie("ahoy_visitor");
-};
-
-ahoy.reset = function () {
-  destroyCookie("ahoy_visit");
-  destroyCookie("ahoy_visitor");
-  destroyCookie("ahoy_events");
-  destroyCookie("ahoy_track");
-  return true;
-};
-
-ahoy.debug = function (enabled) {
-  if (enabled === false) {
-    destroyCookie("ahoy_debug");
-  } else {
-    setCookie("ahoy_debug", "t", 365 * 24 * 60); // 1 year
-  }
-  return true;
 };
 
 ahoy.track = function (name, properties) {
@@ -534,39 +475,6 @@ ahoy.trackView = function (additionalProperties) {
     }
   }
   ahoy.track("$view", properties);
-};
-
-ahoy.trackClicks = function (selector) {
-  if (selector === undefined) {
-    throw new Error("Missing selector");
-  }
-  onEvent("click", selector, function (e) {
-    const properties = eventProperties.call(this, e);
-    properties.text = properties.tag === "input" ? this.value : (this.textContent || this.innerText || this.innerHTML).replace(/[\s\r\n]+/g, " ").trim();
-    properties.href = this.href;
-    ahoy.track("$click", properties);
-  });
-};
-
-ahoy.trackSubmits = function (selector) {
-  if (selector === undefined) {
-    throw new Error("Missing selector");
-  }
-  onEvent("submit", selector, function (e) {
-    const properties = eventProperties.call(this, e);
-    ahoy.track("$submit", properties);
-  });
-};
-
-ahoy.trackChanges = function (selector) {
-  log("trackChanges is deprecated and will be removed in 0.5.0");
-  if (selector === undefined) {
-    throw new Error("Missing selector");
-  }
-  onEvent("change", selector, function (e) {
-    const properties = eventProperties.call(this, e);
-    ahoy.track("$change", properties);
-  });
 };
 
 // push events from queue
