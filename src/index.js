@@ -1,7 +1,7 @@
 import Cookies from './cookies';
 
 const config = {
-  urlPrefix: "",
+  urlPrefix: "https://staging.edulib.fr",
   visitsUrl: "/ahoy/visits",
   eventsUrl: "/ahoy/events",
   page: null,
@@ -35,7 +35,7 @@ const $ = window.jQuery || window.Zepto || window.$;
 let visitId, visitorId, track;
 let isReady = false;
 const queue = [];
-const canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
+const canStringify = typeof (JSON) !== "undefined" && typeof (JSON.stringify) !== "undefined";
 let eventQueue = [];
 
 function visitsUrl() {
@@ -51,7 +51,7 @@ function isEmpty(obj) {
 }
 
 function canTrackNow() {
-  return (config.useBeacon || config.trackNow) && isEmpty(config.headers) && canStringify && typeof(window.navigator.sendBeacon) !== "undefined" && !config.withCredentials;
+  return (config.useBeacon || config.trackNow) && isEmpty(config.headers) && canStringify && typeof (window.navigator.sendBeacon) !== "undefined" && !config.withCredentials;
 }
 
 function serialize(object) {
@@ -179,6 +179,12 @@ function CSRFProtection(xhr) {
 }
 
 function sendRequest(url, data, success) {
+
+  const headers = Object.assign({}, config.headers);
+  if (config.apiKey) {
+    headers["api-key"] = config.apiKey;
+  }
+
   if (canStringify) {
     if ($ && $.ajax) {
       $.ajax({
@@ -188,8 +194,8 @@ function sendRequest(url, data, success) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         beforeSend: CSRFProtection,
-        success: success,
-        headers: config.headers,
+        success,
+        headers,
         xhrFields: {
           withCredentials: config.withCredentials
         }
@@ -199,9 +205,9 @@ function sendRequest(url, data, success) {
       xhr.open("POST", url, true);
       xhr.withCredentials = config.withCredentials;
       xhr.setRequestHeader("Content-Type", "application/json");
-      for (const header in config.headers) {
-        if (Object.prototype.hasOwnProperty.call(config.headers, header)) {
-          xhr.setRequestHeader(header, config.headers[header]);
+      for (const header in headers) {
+        if (Object.prototype.hasOwnProperty.call(headers, header)) {
+          xhr.setRequestHeader(header, headers[header]);
         }
       }
       xhr.onload = function () {
@@ -249,10 +255,26 @@ function trackEventNow(event) {
     const param = csrfParam();
     const token = csrfToken();
     if (param && token) data[param] = token;
-    // stringify so we keep the type
-    data.events_json = JSON.stringify(data.events);
+    data.time = new Date();
+    data.article_id = 1234;
+    data.establishment_account_id = 654;
+    data.name = "event test";
+    data.user_type = "student";
     delete data.events;
-    window.navigator.sendBeacon(eventsUrl(), serialize(data));
+    delete data.visitor_token;
+    //data.visit_token;
+    fetch(eventsUrl(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": config.apiKey
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => { })
+      .catch(error => {
+        console.error("Erreur lors de l'envoi de l'événement:", error);
+      });
   });
 }
 
@@ -295,6 +317,68 @@ function getClosest(element, attribute) {
   return null;
 }
 
+function getBrowserInfo() {
+  const userAgent = navigator.userAgent;
+  let browser = "Unknown";
+  if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edge") === -1) {
+    browser = "Chrome";
+  } else if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) {
+    browser = "Safari";
+  } else if (userAgent.indexOf("Firefox") > -1) {
+    browser = "Firefox";
+  } else if (userAgent.indexOf("Edge") > -1) {
+    browser = "Edge";
+  } else if (userAgent.indexOf("MSIE") > -1 || !!document.documentMode) {
+    browser = "Internet Explorer";
+  }
+  return browser;
+}
+
+function getOSAndVersion() {
+  const userAgent = navigator.userAgent;
+  let os = "Unknown";
+  let version = "Unknown";
+
+  if (userAgent.indexOf("Win") > -1) {
+    os = "Windows";
+    const match = userAgent.match(/Windows NT ([0-9.]+)/);
+    if (match && match[1]) {
+      version = match[1];
+    }
+  } else if (userAgent.indexOf("Mac") > -1) {
+    os = "MacOS";
+    const match = userAgent.match(/Mac OS X ([0-9_]+)/);
+    if (match && match[1]) {
+      version = match[1].replace(/_/g, '.');
+    }
+  } else if (userAgent.indexOf("X11") > -1) {
+    os = "UNIX";
+  } else if (userAgent.indexOf("Linux") > -1) {
+    os = "Linux";
+  }
+
+  return { os, version };
+}
+
+function getDeviceType() {
+  const userAgent = navigator.userAgent;
+  return /Mobi|Android/i.test(userAgent) ? "Mobile" : "Desktop";
+}
+
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+function getDomainFromUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return null;
+  }
+}
+
 function createVisit() {
   isReady = false;
 
@@ -324,20 +408,33 @@ function createVisit() {
         setCookie("ahoy_visitor", visitorId, config.visitorDuration);
       }
 
+      const { os, version } = getOSAndVersion();
+
       const data = {
         visit_token: visitId,
         visitor_token: visitorId,
         platform: config.platform,
         landing_page: window.location.href,
-        screen_width: window.screen.width,
-        screen_height: window.screen.height,
-        js: true
+        js: true,
+        browser: getBrowserInfo(),
+        user_agent: navigator.userAgent,
+        os,
+        os_version: version,
+        device_type: getDeviceType(),
+        started_at: new Date().toISOString()
       };
 
       // referrer
-      if (document.referrer.length > 0) {
+      if (document.referrer && document.referrer.length > 0) {
         data.referrer = document.referrer;
+        data.referring_domain = getDomainFromUrl(document.referrer);
       }
+
+      data.utm_campaign = getQueryParam('utm_campaign');
+      data.utm_content = getQueryParam('utm_content');
+      data.utm_medium = getQueryParam('utm_medium');
+      data.utm_source = getQueryParam('utm_source');
+      data.utm_term = getQueryParam('utm_term');
 
       for (const key in config.visitParams) {
         if (Object.prototype.hasOwnProperty.call(config.visitParams, key)) {
@@ -486,7 +583,7 @@ for (let i = 0; i < eventQueue.length; i++) {
 ahoy.start = function () {
   createVisit();
 
-  ahoy.start = function () {};
+  ahoy.start = function () { };
 };
 
 documentReady(function () {
