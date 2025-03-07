@@ -1,24 +1,5 @@
-import { destroyCookie, generateId, getBrowserInfo, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, setCookie } from './helpers';
-
-const config = {
-  urlPrefix: "https://staging.edulib.fr",
-  visitsUrl: "/ahoy/visits",
-  eventsUrl: "/ahoy/events",
-  page: null,
-  platform: "Web",
-  useBeacon: true,
-  startOnReady: true,
-  trackVisits: true,
-  cookies: true,
-  cookieDomain: null,
-  headers: {},
-  visitParams: {},
-  withCredentials: false,
-  visitDuration: 4 * 60, // default 4 hours
-  visitorDuration: 2 * 365 * 24 * 60 // default 2 years
-};
-
-
+import { config } from './config';
+import { canStringify, canTrackNow, cleanObject, csrfParam, CSRFProtection, csrfToken, destroyCookie, documentReady, eventsUrl, generateId, getBrowserInfo, getClosest, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, page, presence, setCookie, visitsUrl } from './helpers';
 
 /** 
  * -------------------------- Old public functions ----------------------------------
@@ -98,31 +79,13 @@ ahoy.configure = function (apiKey) {
   config.apiKey = apiKey;
 };
 
-// legacy
-ahoy.configure(ahoy);
-
 const $ = window.jQuery || window.Zepto || window.$;
 let visitId, visitorId, track;
 let isReady = false;
 const queue = [];
-const canStringify = typeof (JSON) !== "undefined" && typeof (JSON.stringify) !== "undefined";
+
 let eventQueue = [];
 
-function visitsUrl() {
-  return config.urlPrefix + config.visitsUrl;
-}
-
-function eventsUrl() {
-  return config.urlPrefix + config.eventsUrl;
-}
-
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
-
-function canTrackNow() {
-  return (config.useBeacon || config.trackNow) && isEmpty(config.headers) && canStringify && typeof (window.navigator.sendBeacon) !== "undefined" && !config.withCredentials;
-}
 
 function setReady() {
   let callback;
@@ -140,69 +103,10 @@ ahoy.ready = function (callback) {
   }
 };
 
-function matchesSelector(element, selector) {
-  const matches = element.matches ||
-    element.matchesSelector ||
-    element.mozMatchesSelector ||
-    element.msMatchesSelector ||
-    element.oMatchesSelector ||
-    element.webkitMatchesSelector;
-
-  if (matches) {
-    if (matches.apply(element, [selector])) {
-      return element;
-    } else if (element.parentElement) {
-      return matchesSelector(element.parentElement, selector);
-    }
-    return null;
-  } else {
-    log("Unable to match");
-    return null;
-  }
-}
-
-function onEvent(eventName, selector, callback) {
-  document.addEventListener(eventName, function (e) {
-    const matchedElement = matchesSelector(e.target, selector);
-    if (matchedElement) {
-      const skip = getClosest(matchedElement, "data-ahoy-skip");
-      if (skip !== null && skip !== "false") return;
-
-      callback.call(matchedElement, e);
-    }
-  });
-}
-
-// http://beeker.io/jquery-document-ready-equivalent-vanilla-javascript
-function documentReady(callback) {
-  if (document.readyState === "interactive" || document.readyState === "complete") {
-    setTimeout(callback, 0);
-  } else {
-    document.addEventListener("DOMContentLoaded", callback);
-  }
-}
-
 function saveEventQueue() {
   if (config.cookies && canStringify) {
     setCookie("ahoy_events", JSON.stringify(eventQueue), 1);
   }
-}
-
-// from rails-ujs
-
-function csrfToken() {
-  const meta = document.querySelector("meta[name=csrf-token]");
-  return meta && meta.content;
-}
-
-function csrfParam() {
-  const meta = document.querySelector("meta[name=csrf-param]");
-  return meta && meta.content;
-}
-
-function CSRFProtection(xhr) {
-  const token = csrfToken();
-  if (token) xhr.setRequestHeader("X-CSRF-Token", token);
 }
 
 function sendRequest(url, data, success) {
@@ -278,17 +182,35 @@ function trackEvent(event) {
 
 function trackEventNow(event) {
   ahoy.ready(function () {
+    console.log('event', event);
     const data = eventData(event);
     const param = csrfParam();
     const token = csrfToken();
     if (param && token) data[param] = token;
+    const { properties } = event;
+    const { article_id, establishment_account_id, name, user_type } = properties;
     data.time = new Date();
-    data.article_id = 1234;
-    data.establishment_account_id = 654;
-    data.name = "event test";
-    data.user_type = "student";
+
+    if (article_id) {
+      data.article_id = article_id;
+    }
+
+    if (establishment_account_id) {
+      data.establishment_account_id = establishment_account_id;
+    }
+
+    if (name) {
+      data.name = name;
+    }
+
+    if (user_type) {
+      data.user_type = user_type
+    }
+
     delete data.events;
     delete data.visitor_token;
+
+
     fetch(eventsUrl(), {
       method: "POST",
       headers: {
@@ -304,25 +226,6 @@ function trackEventNow(event) {
   });
 }
 
-function page() {
-  return config.page || window.location.pathname;
-}
-
-function presence(str) {
-  return (str && str.length > 0) ? str : null;
-}
-
-function cleanObject(obj) {
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      if (obj[key] === null) {
-        delete obj[key];
-      }
-    }
-  }
-  return obj;
-}
-
 function eventProperties() {
   return cleanObject({
     tag: this.tagName.toLowerCase(),
@@ -331,16 +234,6 @@ function eventProperties() {
     page: page(),
     section: getClosest(this, "data-section")
   });
-}
-
-function getClosest(element, attribute) {
-  for (; element && element !== document; element = element.parentNode) {
-    if (element.hasAttribute(attribute)) {
-      return element.getAttribute(attribute);
-    }
-  }
-
-  return null;
 }
 
 function createVisit() {
