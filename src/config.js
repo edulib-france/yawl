@@ -1,5 +1,7 @@
+const env = process.env.NODE_ENV || 'development';
+
 export const config = {
-    urlPrefix: "https://staging.edulib.fr",
+    urlPrefix: env === 'production' ? 'https://edulib.fr' : 'https://staging.edulib.fr',
     visitsUrl: "/ahoy/visits",
     eventsUrl: "/ahoy/events",
     page: null,

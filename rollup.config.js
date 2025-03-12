@@ -3,9 +3,10 @@ import commonjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json" with { type: "json" };
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
+import replace from '@rollup/plugin-replace';
 
 const banner =
-`/*!
+  `/*!
  * yawl v${pkg.version}
  * ${pkg.description}
  * ${pkg.repository.url}
@@ -28,6 +29,10 @@ export default [
       banner: banner
     },
     plugins: [
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        preventAssignment: true
+      }),
       resolve(),
       commonjs(),
       buble()
@@ -42,6 +47,10 @@ export default [
       banner: minBanner
     },
     plugins: [
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        preventAssignment: true
+      }),
       resolve(),
       commonjs(),
       buble(),
@@ -56,6 +65,10 @@ export default [
       banner: banner
     },
     plugins: [
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        preventAssignment: true
+      }),
       buble()
     ]
   }

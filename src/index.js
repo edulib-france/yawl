@@ -67,6 +67,11 @@ function trackChanges(selector) {
 
 const ahoy = window.ahoy || window.Ahoy || {};
 
+/**
+ * Configures the Yawl analytics library with your API key.
+ * This function must be called before tracking events.
+ * @param {string} apiKey - Your API key for tracking events.
+ */
 ahoy.configure = function (apiKey) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
@@ -307,14 +312,47 @@ function createVisit() {
   }
 }
 
+/**
+ * Retrieves the current visit token from cookies.
+ * @returns {string|null} The visit token, or null if not set.
+ */
 ahoy.getVisitId = ahoy.getVisitToken = function () {
   return getCookie("ahoy_visit");
 };
 
+/**
+ * Retrieves the current visitor token from cookies.
+ * @returns {string|null} The visitor token, or null if not set.
+ */
 ahoy.getVisitorId = ahoy.getVisitorToken = function () {
   return getCookie("ahoy_visitor");
 };
 
+/**
+ * @typedef {Object} EventProperties
+ * @property {number} [article_id] - The article ID associated with the event.
+ * @property {number} [establishment_account_id] - The establishment account ID.
+ * @property {string} [name] - The name of the event.
+ * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
+ */
+
+/**
+ * Tracks a custom event.
+ * The event is queued and sent via the configured transport method.
+ *
+ * Example usage:
+ * 
+ * yawl.track("click", {
+ *   article_id: 69,
+ *   establishment_account_id: 109,
+ *   name: 'test',
+ *   user_type: 'client'
+ * });
+ *
+ * @param {string} name - The name of the event.
+ * @param {EventProperties} [properties={}] - Additional properties to associate with the event.
+ * @returns {boolean} True if the event is successfully queued for tracking.
+ */
 ahoy.track = function (name, properties) {
   // generate unique id
   const event = {
@@ -353,6 +391,12 @@ ahoy.track = function (name, properties) {
   return true;
 };
 
+/**
+ * Tracks a page view event.
+ * Automatically collects URL, title, and page path information.
+ * You can pass additional properties to enrich the page view data.
+ * @param {Object} [additionalProperties={}] - Additional properties to include in the page view event.
+ */
 ahoy.trackView = function (additionalProperties) {
   const properties = {
     url: window.location.href,
