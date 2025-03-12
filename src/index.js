@@ -1,5 +1,5 @@
 import { config } from './config';
-import { canStringify, canTrackNow, cleanObject, csrfParam, CSRFProtection, csrfToken, destroyCookie, documentReady, eventsUrl, generateId, getBrowserInfo, getClosest, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, page, presence, setCookie, visitsUrl } from './helpers';
+import { canStringify, canTrackNow, cleanObject, csrfParam, CSRFProtection, csrfToken, destroyCookie, documentReady, eventsUrl, generateId, getBrowserInfo, getClosest, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, onEvent, page, presence, setCookie, visitsUrl } from './helpers';
 
 /** 
  * -------------------------- Old public functions ----------------------------------
@@ -204,7 +204,7 @@ function trackEventNow(event) {
     }
 
     if (user_type) {
-      data.user_type = user_type
+      data.user_type = user_type;
     }
 
     delete data.events;
@@ -219,7 +219,7 @@ function trackEventNow(event) {
       },
       body: JSON.stringify(data)
     })
-      .then(response => { })
+      .then(() => { })
       .catch(error => {
         console.error("Erreur lors de l'envoi de l'événement:", error);
       });
