@@ -187,7 +187,6 @@ function trackEvent(event) {
 
 function trackEventNow(event) {
   ahoy.ready(function () {
-    console.log('event', event);
     const data = eventData(event);
     const param = csrfParam();
     const token = csrfToken();
@@ -222,7 +221,7 @@ function trackEventNow(event) {
         "Content-Type": "application/json",
         "api-key": config.apiKey
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ event: data })
     })
       .then(() => { })
       .catch(error => {
@@ -300,7 +299,7 @@ function createVisit() {
 
       log(data);
 
-      sendRequest(visitsUrl(), data, function () {
+      sendRequest(visitsUrl(), { visit: data }, function () {
         // wait until successful to destroy
         destroyCookie("ahoy_track");
         setReady();
