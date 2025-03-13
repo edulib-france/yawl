@@ -11,7 +11,7 @@
     ".": {
       "require": "./dist/yawl.js",
       "import": "./dist/yawl.esm.js",
-      "types": "./yawl.d.ts"
+      "types": "./types/index.d.ts"
     }
   },
   "scripts": {
@@ -43,6 +43,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^22.13.10",
     "eslint": "^9.14.0",
-    "rollup": "^4.25.0"
+    "rollup": "^4.25.0",
+    "typescript": "^5.8.2"
   }
 }

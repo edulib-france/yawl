@@ -65,6 +65,16 @@ function trackChanges(selector) {
  * -------------------------------------------------------
  */
 
+
+
+/**
+ * @typedef {Object} Yawl
+ * @property {function(string): void} configure - Configures the Yawl analytics library.
+ * @property {function(string, EventProperties=): boolean} track - Tracks a custom event.
+ * @property {function(Object=): void} trackView - Tracks a page view event.
+ */
+/** @type {Yawl} */
+
 const yawl = window.yawl || window.yawl || {};
 
 /**
