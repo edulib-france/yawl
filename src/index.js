@@ -34,7 +34,7 @@ function trackClicks(selector) {
     const properties = eventProperties.call(this, e);
     properties.text = properties.tag === "input" ? this.value : (this.textContent || this.innerText || this.innerHTML).replace(/[\s\r\n]+/g, " ").trim();
     properties.href = this.href;
-    ahoy.track("$click", properties);
+    yawl.track("$click", properties);
   });
 };
 
@@ -45,7 +45,7 @@ function trackSubmits(selector) {
   }
   onEvent("submit", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    ahoy.track("$submit", properties);
+    yawl.track("$submit", properties);
   });
 };
 
@@ -57,7 +57,7 @@ function trackChanges(selector) {
   }
   onEvent("change", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    ahoy.track("$change", properties);
+    yawl.track("$change", properties);
   });
 };
 
@@ -65,14 +65,14 @@ function trackChanges(selector) {
  * -------------------------------------------------------
  */
 
-const ahoy = window.ahoy || window.Ahoy || {};
+const yawl = window.yawl || window.yawl || {};
 
 /**
  * Configures the Yawl analytics library with your API key.
  * This function must be called before tracking events.
  * @param {string} apiKey - Your API key for tracking events.
  */
-ahoy.configure = function (apiKey) {
+yawl.configure = function (apiKey) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
@@ -100,7 +100,7 @@ function setReady() {
   isReady = true;
 }
 
-ahoy.ready = function (callback) {
+yawl.ready = function (callback) {
   if (isReady) {
     callback();
   } else {
@@ -171,7 +171,7 @@ function eventData(event) {
 }
 
 function trackEvent(event) {
-  ahoy.ready(function () {
+  yawl.ready(function () {
     sendRequest(eventsUrl(), eventData(event), function () {
       // remove from queue
       for (let i = 0; i < eventQueue.length; i++) {
@@ -186,7 +186,7 @@ function trackEvent(event) {
 }
 
 function trackEventNow(event) {
-  ahoy.ready(function () {
+  yawl.ready(function () {
     const data = eventData(event);
     const param = csrfParam();
     const token = csrfToken();
@@ -243,8 +243,8 @@ function eventProperties() {
 function createVisit() {
   isReady = false;
 
-  visitId = ahoy.getVisitId();
-  visitorId = ahoy.getVisitorId();
+  visitId = yawl.getVisitId();
+  visitorId = yawl.getVisitorId();
   track = getCookie("ahoy_track");
 
   if (config.cookies === false || config.trackVisits === false) {
@@ -315,7 +315,7 @@ function createVisit() {
  * Retrieves the current visit token from cookies.
  * @returns {string|null} The visit token, or null if not set.
  */
-ahoy.getVisitId = ahoy.getVisitToken = function () {
+yawl.getVisitId = yawl.getVisitToken = function () {
   return getCookie("ahoy_visit");
 };
 
@@ -323,7 +323,7 @@ ahoy.getVisitId = ahoy.getVisitToken = function () {
  * Retrieves the current visitor token from cookies.
  * @returns {string|null} The visitor token, or null if not set.
  */
-ahoy.getVisitorId = ahoy.getVisitorToken = function () {
+yawl.getVisitorId = yawl.getVisitorToken = function () {
   return getCookie("ahoy_visitor");
 };
 
@@ -352,7 +352,7 @@ ahoy.getVisitorId = ahoy.getVisitorToken = function () {
  * @param {EventProperties} [properties={}] - Additional properties to associate with the event.
  * @returns {boolean} True if the event is successfully queued for tracking.
  */
-ahoy.track = function (name, properties) {
+yawl.track = function (name, properties) {
   // generate unique id
   const event = {
     name: name,
@@ -362,16 +362,16 @@ ahoy.track = function (name, properties) {
     js: true
   };
 
-  ahoy.ready(function () {
-    if (config.cookies && !ahoy.getVisitId()) {
+  yawl.ready(function () {
+    if (config.cookies && !yawl.getVisitId()) {
       createVisit();
     }
 
-    ahoy.ready(function () {
+    yawl.ready(function () {
       log(event);
 
-      event.visit_token = ahoy.getVisitId();
-      event.visitor_token = ahoy.getVisitorId();
+      event.visit_token = yawl.getVisitId();
+      event.visitor_token = yawl.getVisitorId();
 
       if (canTrackNow()) {
         trackEventNow(event);
@@ -396,7 +396,7 @@ ahoy.track = function (name, properties) {
  * You can pass additional properties to enrich the page view data.
  * @param {Object} [additionalProperties={}] - Additional properties to include in the page view event.
  */
-ahoy.trackView = function (additionalProperties) {
+yawl.trackView = function (additionalProperties) {
   const properties = {
     url: window.location.href,
     title: document.title,
@@ -410,7 +410,7 @@ ahoy.trackView = function (additionalProperties) {
       }
     }
   }
-  ahoy.track("$view", properties);
+  yawl.track("$view", properties);
 };
 
 // push events from queue
@@ -424,16 +424,16 @@ for (let i = 0; i < eventQueue.length; i++) {
   trackEvent(eventQueue[i]);
 }
 
-ahoy.start = function () {
+yawl.start = function () {
   createVisit();
 
-  ahoy.start = function () { };
+  yawl.start = function () { };
 };
 
 documentReady(function () {
   if (config.startOnReady) {
-    ahoy.start();
+    yawl.start();
   }
 });
 
-export default ahoy;
+export default yawl;
