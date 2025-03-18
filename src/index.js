@@ -1,10 +1,33 @@
-import { config } from './config';
-import { canStringify, canTrackNow, cleanObject, csrfParam, CSRFProtection, csrfToken, destroyCookie, documentReady, eventsUrl, generateId, getBrowserInfo, getClosest, getCookie, getDeviceType, getDomainFromUrl, getOSAndVersion, getQueryParam, log, onEvent, page, presence, setCookie, visitsUrl } from './helpers';
+import { config } from "./config";
+import {
+  canStringify,
+  canTrackNow,
+  cleanObject,
+  csrfParam,
+  CSRFProtection,
+  csrfToken,
+  destroyCookie,
+  documentReady,
+  eventsUrl,
+  generateId,
+  getBrowserInfo,
+  getClosest,
+  getCookie,
+  getDeviceType,
+  getDomainFromUrl,
+  getOSAndVersion,
+  getQueryParam,
+  log,
+  onEvent,
+  page,
+  presence,
+  setCookie,
+  visitsUrl,
+} from "./helpers";
 
-/** 
+/**
  * -------------------------- Old public functions ----------------------------------
  */
-
 
 // eslint-disable-next-line no-unused-vars
 function reset() {
@@ -13,7 +36,7 @@ function reset() {
   destroyCookie("ahoy_events");
   destroyCookie("ahoy_track");
   return true;
-};
+}
 
 // eslint-disable-next-line no-unused-vars
 function debug(enabled) {
@@ -23,7 +46,7 @@ function debug(enabled) {
     setCookie("ahoy_debug", "t", 365 * 24 * 60); // 1 year
   }
   return true;
-};
+}
 
 // eslint-disable-next-line no-unused-vars
 function trackClicks(selector) {
@@ -32,11 +55,16 @@ function trackClicks(selector) {
   }
   onEvent("click", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    properties.text = properties.tag === "input" ? this.value : (this.textContent || this.innerText || this.innerHTML).replace(/[\s\r\n]+/g, " ").trim();
+    properties.text =
+      properties.tag === "input"
+        ? this.value
+        : (this.textContent || this.innerText || this.innerHTML)
+            .replace(/[\s\r\n]+/g, " ")
+            .trim();
     properties.href = this.href;
     yawl.track("$click", properties);
   });
-};
+}
 
 // eslint-disable-next-line no-unused-vars
 function trackSubmits(selector) {
@@ -47,7 +75,7 @@ function trackSubmits(selector) {
     const properties = eventProperties.call(this, e);
     yawl.track("$submit", properties);
   });
-};
+}
 
 // eslint-disable-next-line no-unused-vars
 function trackChanges(selector) {
@@ -59,13 +87,11 @@ function trackChanges(selector) {
     const properties = eventProperties.call(this, e);
     yawl.track("$change", properties);
   });
-};
+}
 
 /**
  * -------------------------------------------------------
  */
-
-
 
 /**
  * @typedef {Object} Yawl
@@ -87,8 +113,10 @@ yawl.configure = function (apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
   }
-  if (typeof apiKey !== 'string') {
-    console.error("Erreur: l'argument api_key doit être une chaine de caractère");
+  if (typeof apiKey !== "string") {
+    console.error(
+      "Erreur: l'argument api_key doit être une chaine de caractère"
+    );
     return;
   }
   config.apiKey = apiKey;
@@ -100,7 +128,6 @@ let isReady = false;
 const queue = [];
 
 let eventQueue = [];
-
 
 function setReady() {
   let callback;
@@ -125,7 +152,6 @@ function saveEventQueue() {
 }
 
 function sendRequest(url, data, success) {
-
   const headers = Object.assign({}, config.headers);
   if (config.apiKey) {
     headers["api-key"] = config.apiKey;
@@ -143,8 +169,8 @@ function sendRequest(url, data, success) {
         success,
         headers,
         xhrFields: {
-          withCredentials: config.withCredentials
-        }
+          withCredentials: config.withCredentials,
+        },
       });
     } else {
       const xhr = new XMLHttpRequest();
@@ -169,7 +195,7 @@ function sendRequest(url, data, success) {
 
 function eventData(event) {
   const data = {
-    events: [event]
+    events: [event],
   };
   if (config.cookies) {
     data.visit_token = event.visit_token;
@@ -202,7 +228,8 @@ function trackEventNow(event) {
     const token = csrfToken();
     if (param && token) data[param] = token;
     const { properties } = event;
-    const { article_id, establishment_account_id, name, user_type } = properties;
+    const { article_id, establishment_account_id, name, user_type } =
+      properties;
     data.time = new Date();
 
     if (article_id) {
@@ -224,17 +251,16 @@ function trackEventNow(event) {
     delete data.events;
     delete data.visitor_token;
 
-
     fetch(eventsUrl(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": config.apiKey
+        "api-key": config.apiKey,
       },
-      body: JSON.stringify({ event: data })
+      body: JSON.stringify({ event: data }),
     })
-      .then(() => { })
-      .catch(error => {
+      .then(() => {})
+      .catch((error) => {
         console.error("Erreur lors de l'envoi de l'événement:", error);
       });
   });
@@ -244,9 +270,9 @@ function eventProperties() {
   return cleanObject({
     tag: this.tagName.toLowerCase(),
     id: presence(this.id),
-    "class": presence(this.className),
+    class: presence(this.className),
     page: page(),
-    section: getClosest(this, "data-section")
+    section: getClosest(this, "data-section"),
   });
 }
 
@@ -292,7 +318,7 @@ function createVisit() {
         os,
         os_version: version,
         device_type: getDeviceType(),
-        started_at: new Date().toISOString()
+        started_at: new Date().toISOString(),
       };
 
       // referrer
@@ -301,11 +327,11 @@ function createVisit() {
         data.referring_domain = getDomainFromUrl(document.referrer);
       }
 
-      data.utm_campaign = getQueryParam('utm_campaign');
-      data.utm_content = getQueryParam('utm_content');
-      data.utm_medium = getQueryParam('utm_medium');
-      data.utm_source = getQueryParam('utm_source');
-      data.utm_term = getQueryParam('utm_term');
+      data.utm_campaign = getQueryParam("utm_campaign");
+      data.utm_content = getQueryParam("utm_content");
+      data.utm_medium = getQueryParam("utm_medium");
+      data.utm_source = getQueryParam("utm_source");
+      data.utm_term = getQueryParam("utm_term");
 
       log(data);
 
@@ -350,7 +376,7 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  * The event is queued and sent via the configured transport method.
  *
  * Example usage:
- * 
+ *
  * yawl.track("click", {
  *   article_id: 69,
  *   establishment_account_id: 109,
@@ -367,9 +393,9 @@ yawl.track = function (name, properties) {
   const event = {
     name: name,
     properties: properties || {},
-    time: (new Date()).getTime() / 1000.0,
+    time: new Date().getTime() / 1000.0,
     id: generateId(),
-    js: true
+    js: true,
   };
 
   yawl.ready(function () {
@@ -410,12 +436,14 @@ yawl.trackView = function (additionalProperties) {
   const properties = {
     url: window.location.href,
     title: document.title,
-    page: page()
+    page: page(),
   };
 
   if (additionalProperties) {
     for (const propName in additionalProperties) {
-      if (Object.prototype.hasOwnProperty.call(additionalProperties, propName)) {
+      if (
+        Object.prototype.hasOwnProperty.call(additionalProperties, propName)
+      ) {
         properties[propName] = additionalProperties[propName];
       }
     }
@@ -437,7 +465,7 @@ for (let i = 0; i < eventQueue.length; i++) {
 yawl.start = function () {
   createVisit();
 
-  yawl.start = function () { };
+  yawl.start = function () {};
 };
 
 documentReady(function () {

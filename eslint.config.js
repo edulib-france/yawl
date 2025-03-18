@@ -4,15 +4,14 @@ import globals from "globals";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
-  { ignores: ["dist/"] },
+  { ignores: ["dist/", "*.config.js"] },
   {
-    ignores: ["*.config.js"],
     languageOptions: {
       ecmaVersion: 6,
       sourceType: "module",
       globals: {
         ...globals.browser,
-        ...globals.node,
+        ENV: true,
       },
     },
     rules: {
@@ -34,5 +33,5 @@ export default [
         },
       ],
     },
-  }
+  },
 ];

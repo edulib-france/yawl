@@ -29,10 +29,7 @@ export default [
       banner: banner
     },
     plugins: [
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        preventAssignment: true
-      }),
+      setupReplacePlugin(),
       resolve(),
       commonjs(),
       buble()
@@ -47,10 +44,7 @@ export default [
       banner: minBanner
     },
     plugins: [
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        preventAssignment: true
-      }),
+      setupReplacePlugin(),
       resolve(),
       commonjs(),
       buble(),
@@ -65,11 +59,17 @@ export default [
       banner: banner
     },
     plugins: [
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        preventAssignment: true
-      }),
+      setupReplacePlugin(),
       buble()
     ]
   }
 ];
+
+function setupReplacePlugin() {
+  return replace({
+    exclude: 'node_modules/**',
+    ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+    preventAssignment: true
+  });
+  
+}
