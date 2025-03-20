@@ -23,7 +23,8 @@ const outputName = "yawl";
 const copyTypes = copy({
   targets: [
     { src: 'src/types/*', dest: 'types' }
-  ]
+  ],
+  hook: 'writeBundle'
 })
 
 export default [
