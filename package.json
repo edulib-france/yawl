@@ -8,7 +8,7 @@
   "homepage": "https://github.com/edulib-france/yawl",
   "description": "Simple, powerful JavaScript analytics",
   "type": "module",
-  "types": "yawl.d.ts",
+  "types": "./types/index.d.ts",
   "main": "./dist/yawl.js",
   "module": "./dist/yawl.esm.js",
   "exports": {
