@@ -8,11 +8,11 @@ import copy from 'rollup-plugin-copy';
 
 const banner =
   `/*!
- * yawl v${pkg.version} 
- * ${pkg.description} 
- * ${pkg.repository.url} 
- * ${pkg.license} License 
- */ 
+ * yawl v${pkg.version}
+ * ${pkg.description}
+ * ${pkg.repository.url}
+ * ${pkg.license} License
+ */
 `;
 
 const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
