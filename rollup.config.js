@@ -3,29 +3,21 @@ import commonjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json" with { type: "json" };
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
-import replace from '@rollup/plugin-replace';
-import copy from 'rollup-plugin-copy'; 
+import replace from "@rollup/plugin-replace";
 
-const banner =
-  `/*!
- * yawl v${pkg.version}
- * ${pkg.description}
- * ${pkg.repository.url}
- * ${pkg.license} License
- */
+const banner = 
+`/*!
+  * yawl v${pkg.version}
+  * ${pkg.description}
+  * ${pkg.repository.url}
+  * ${pkg.license} License
+  */
 `;
 
 const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
 
 const input = "src/index.js";
 const outputName = "yawl";
-
-const copyTypes = copy({
-  targets: [
-    { src: 'src/types/*', dest: 'types' }
-  ],
-  hook: 'writeBundle'
-})
 
 export default [
   {
@@ -40,8 +32,7 @@ export default [
       setupReplacePlugin(),
       resolve(),
       commonjs(),
-      buble(),
-      copyTypes
+      buble()
     ]
   },
   {
