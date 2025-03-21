@@ -365,10 +365,13 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
 
 /**
  * @typedef {Object} EventProperties
- * @property {number} [article_id] - The article ID associated with the event.
+ * @property {number} [ean] - The article ID associated with the event.
  * @property {number} [establishment_account_id] - The establishment account ID.
  * @property {string} [name] - The name of the event.
+ * @property {Object} [properties] - Additional properties related to the event.
+ * @property {Date} [time] - The time when the event occurred.
  * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
+ * @property {string} [visit_token] - The token associated with the visit.
  */
 
 /**
@@ -378,10 +381,15 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  * Example usage:
  *
  * yawl.track("click", {
- *   article_id: 69,
- *   establishment_account_id: 109,
- *   name: 'test',
- *   user_type: 'client'
+ *  ean: 12323938432,
+ *  establishment_account_id: 456,
+ *  name: 'New Event',
+ *  properties: {
+ *    key: 'value'
+ *  },
+ *  time: '2023-10-01T12:00:00Z',
+ *  user_type: 'student',
+ *  visit_token: 789,
  * });
  *
  * @param {string} name - The name of the event.
