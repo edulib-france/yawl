@@ -95,7 +95,7 @@ function trackChanges(selector) {
 
 /**
  * @typedef {Object} Yawl
- * @property {function(string): void} configure - Configures the Yawl analytics library.
+ * @property {function({ apiKey: string }): void} configure - Configures the Yawl analytics library.
  * @property {function(string, EventProperties=): boolean} track - Tracks a custom event.
  * @property {function(Object=): void} trackView - Tracks a page view event.
  */
@@ -106,9 +106,9 @@ const yawl = window.yawl || window.yawl || {};
 /**
  * Configures the Yawl analytics library with your API key.
  * This function must be called before tracking events.
- * @param {string} apiKey - Your API key for tracking events.
+ * @param {{ apiKey: string }} configObj - An object containing your API key for tracking events.
  */
-yawl.configure = function (apiKey) {
+yawl.configure = function ({ apiKey }) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
