@@ -60,7 +60,7 @@ After configuration, you can initialize Yawl and track events on your site. For 
         },
         time: '2023-10-01T12:00:00Z',
         user_type: 'student',
-        visit_token: 789
+        visit_token: '789'
       });
     </script>
   </head>
@@ -98,7 +98,7 @@ yawl.track('click', {
   },
   time: '2023-10-01T12:00:00Z',
   user_type: 'student',
-  visit_token: 789,
+  visit_token: '789',
 });
 ```
 
