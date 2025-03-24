@@ -34,7 +34,7 @@ npm install
 
 ## Configuration
 
-`yawl.configure('api-key')` must be called before tracking events.
+`yawl.configure({ apiKey: 'your_api_key' })` must be called before tracking events.
 
 ## Usage
 
