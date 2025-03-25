@@ -21,8 +21,8 @@
   "scripts": {
     "build": "tsc && rollup -c",
     "lint": "eslint src",
-    "publish:npm": "npm build && npm publish",
-    "publish:github": "npm build && npm publish --registry=https://npm.pkg.github.com --scope=@edulib-france --dry-run"
+    "publish:npm": "npm run build && npm publish",
+    "publish:github": "npm run build && npm publish --registry=https://npm.pkg.github.com --scope=@edulib-france"
   },
   "keywords": [
     "analytics",
