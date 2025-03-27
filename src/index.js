@@ -229,29 +229,9 @@ function trackEventNow(event) {
     const param = csrfParam();
     const token = csrfToken();
     if (param && token) data[param] = token;
-    const { properties } = event;
-    const { article_id, establishment_account_id, name, user_type } =
-      properties;
     data.time = new Date();
 
-    if (article_id) {
-      data.article_id = article_id;
-    }
-
-    if (establishment_account_id) {
-      data.establishment_account_id = establishment_account_id;
-    }
-
-    if (name) {
-      data.name = name;
-    }
-
-    if (user_type) {
-      data.user_type = user_type;
-    }
-
-    delete data.events;
-    delete data.visitor_token;
+    // delete data.visitor_token;
 
     fetch(eventsUrl(), {
       method: "POST",
