@@ -228,7 +228,6 @@ function trackEventNow(event) {
     const param = csrfParam();
     const token = csrfToken();
     if (param && token) data[param] = token;
-    data.time = new Date();
 
     // delete data.visitor_token;
 
