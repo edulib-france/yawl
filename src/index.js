@@ -195,16 +195,16 @@ function sendRequest(url, data, success) {
 }
 
 function eventData(event) {
-  const data = {
-    events: [event],
-  };
-  if (config.cookies) {
-    data.visit_token = event.visit_token;
-    data.visitor_token = event.visitor_token;
-  }
-  delete event.visit_token;
-  delete event.visitor_token;
-  return data;
+  /**
+   * In our current application, the “visit_token” and “visitor_token” tokens are sent directly via the body.
+   */
+  // if (config.cookies) {
+  //   data.visit_token = event.visit_token;
+  //   data.visitor_token = event.visitor_token;
+  // }
+  // delete event.visit_token;
+  // delete event.visitor_token;
+  return event;
 }
 
 function trackEvent(event) {
@@ -228,29 +228,8 @@ function trackEventNow(event) {
     const param = csrfParam();
     const token = csrfToken();
     if (param && token) data[param] = token;
-    const { properties } = event;
-    const { article_id, establishment_account_id, name, user_type } =
-      properties;
-    data.time = new Date();
 
-    if (article_id) {
-      data.article_id = article_id;
-    }
-
-    if (establishment_account_id) {
-      data.establishment_account_id = establishment_account_id;
-    }
-
-    if (name) {
-      data.name = name;
-    }
-
-    if (user_type) {
-      data.user_type = user_type;
-    }
-
-    delete data.events;
-    delete data.visitor_token;
+    // delete data.visitor_token;
 
     fetch(eventsUrl(), {
       method: "POST",
@@ -370,9 +349,7 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  * @property {number} [establishment_account_id] - The establishment account ID.
  * @property {string} [name] - The name of the event.
  * @property {Object} [properties] - Additional properties related to the event.
- * @property {Date} [time] - The time when the event occurred.
  * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
- * @property {string} [visit_token] - The token associated with the visit.
  */
 
 /**
@@ -392,20 +369,17 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  *  properties: {
  *    key: 'value'
  *  },
- *  time: '2023-10-01T12:00:00Z',
  *  user_type: 'student',
- *  visit_token: 789,
  * });
  */
-yawl.track = function (name, properties) {
+yawl.track = function (name, properties = {}) {
   // generate unique id
-  const event = {
+  const event = Object.assign({}, properties, {
     name: name,
-    properties: properties || {},
-    time: new Date().getTime() / 1000.0,
+    time: new Date().toISOString(),
     id: generateId(),
     js: true,
-  };
+  });
 
   yawl.ready(function () {
     if (config.cookies && !yawl.getVisitId()) {
