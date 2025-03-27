@@ -195,7 +195,6 @@ function sendRequest(url, data, success) {
 }
 
 function eventData(event) {
-  const { id, js, ...data } = event;
   /**
    * In our current application, the “visit_token” and “visitor_token” tokens are sent directly via the body.
    */
@@ -205,7 +204,7 @@ function eventData(event) {
   // }
   // delete event.visit_token;
   // delete event.visitor_token;
-  return data;
+  return event;
 }
 
 function trackEvent(event) {
