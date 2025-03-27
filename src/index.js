@@ -397,15 +397,14 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  *  visit_token: 789,
  * });
  */
-yawl.track = function (name, properties) {
+yawl.track = function (name, properties = {}) {
   // generate unique id
-  const event = {
+  const event = Object.assign({}, properties, {
     name: name,
-    properties: properties || {},
     time: new Date().getTime() / 1000.0,
     id: generateId(),
     js: true,
-  };
+  });
 
   yawl.ready(function () {
     if (config.cookies && !yawl.getVisitId()) {
