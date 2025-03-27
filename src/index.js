@@ -195,9 +195,7 @@ function sendRequest(url, data, success) {
 }
 
 function eventData(event) {
-  const data = {
-    events: [event],
-  };
+  const { id, js, ...data } = event;
   if (config.cookies) {
     data.visit_token = event.visit_token;
     data.visitor_token = event.visitor_token;
