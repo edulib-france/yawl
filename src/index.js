@@ -196,12 +196,15 @@ function sendRequest(url, data, success) {
 
 function eventData(event) {
   const { id, js, ...data } = event;
-  if (config.cookies) {
-    data.visit_token = event.visit_token;
-    data.visitor_token = event.visitor_token;
-  }
-  delete event.visit_token;
-  delete event.visitor_token;
+  /**
+   * In our current application, the “visit_token” and “visitor_token” tokens are sent directly via the body.
+   */
+  // if (config.cookies) {
+  //   data.visit_token = event.visit_token;
+  //   data.visitor_token = event.visitor_token;
+  // }
+  // delete event.visit_token;
+  // delete event.visitor_token;
   return data;
 }
 
