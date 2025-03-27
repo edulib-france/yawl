@@ -377,7 +377,7 @@ yawl.track = function (name, properties = {}) {
   // generate unique id
   const event = Object.assign({}, properties, {
     name: name,
-    time: new Date().getTime() / 1000.0,
+    time: new Date().toISOString(),
     id: generateId(),
     js: true,
   });
