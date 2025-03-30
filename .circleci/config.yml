@@ -20,8 +20,32 @@ jobs:
       - store_artifacts:
           path: dist
 
+  publish:
+    resource_class: small
+    docker:
+      - image: cimg/node:22.14.0
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Publish to npm
+          command: |
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            npm publish --access=public
+      - run:
+          name: Publish to GitHub Packages
+          command: |
+            echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" > .npmrc
+            npm publish --registry=https://npm.pkg.github.com
+
 workflows:
   version: 2
-  build-workflow:
+  build-and-publish:
     jobs:
       - build
+      - publish:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
