@@ -28,6 +28,12 @@ jobs:
       - checkout
       - node/install-packages
       - run:
+          name: Bump version and commit changes
+          command: |
+            # TODO: Automate versioning
+            npm version patch -m "chore(release): bump version to %s"
+            git push --follow-tags
+      - run:
           name: Publish to npm
           command: |
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
