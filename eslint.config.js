@@ -7,7 +7,6 @@ export default [
   { ignores: ["dist/", "*.config.js"] },
   {
     languageOptions: {
-      ecmaVersion: 6,
       sourceType: "module",
       globals: {
         ...globals.browser,
