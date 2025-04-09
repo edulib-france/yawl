@@ -1,16 +1,16 @@
 import { config } from './config';
 import Cookies from './cookies';
 
-export function setCookie(name, value, ttl) {
-  Cookies.set(name, value, ttl);
-};
-
-export function getCookie(name) {
-  return Cookies.get(name);
+export async function setCookie(name, value, ttl) {
+  return await Cookies.set(name, value, ttl);
 }
 
-export function destroyCookie(name) {
-  Cookies.set(name, "", -1);
+export async function getCookie(name) {
+  return await Cookies.get(name);
+}
+
+export async function destroyCookie(name) {
+  return await Cookies.set(name, '', -1);
 }
 
 export function getBrowserInfo() {
