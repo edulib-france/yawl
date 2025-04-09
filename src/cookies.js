@@ -45,6 +45,11 @@ export const storage = {
 export async function initStorage() {
   try {
     await localforage.ready();
+    if (!localforage.supports(localforage.INDEXEDDB)) {
+      console.warn(
+        'IndexedDB is not supported in this environment. Yawl storage may not work properly.',
+      );
+    }
   } catch (error) {
     console.error('Failed to initialize storage:', error);
     return null;
