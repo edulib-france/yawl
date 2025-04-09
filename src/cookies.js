@@ -8,6 +8,24 @@ localforage.config({
   driver: localforage.INDEXEDDB,
 });
 
+export const storage = {
+  async set(key, value, ttl) {
+    try {
+      const item = {
+        value,
+        expires: ttl
+          ? new Date(new Date().getTime() + ttl * 60 * 1000).toUTCString()
+          : null,
+      };
+      await localforage.setItem(key, item);
+      return true;
+    } catch (error) {
+      console.error('Error setting storage item:', error);
+      return false;
+    }
+  },
+};
+
 export default {
   set: async function (name, value, ttl) {
     return await storage.set(name, value, ttl);
