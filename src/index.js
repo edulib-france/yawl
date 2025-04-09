@@ -348,16 +348,16 @@ async function createVisit() {
  * Retrieves the current visit token from cookies.
  * @returns {string|null} The visit token, or null if not set.
  */
-yawl.getVisitId = yawl.getVisitToken = function () {
-  return getCookie("ahoy_visit");
+yawl.getVisitId = yawl.getVisitToken = async function () {
+  return await getCookie("ahoy_visit");
 };
 
 /**
  * Retrieves the current visitor token from cookies.
  * @returns {string|null} The visitor token, or null if not set.
  */
-yawl.getVisitorId = yawl.getVisitorToken = function () {
-  return getCookie("ahoy_visitor");
+yawl.getVisitorId = yawl.getVisitorToken = async function () {
+  return await getCookie("ahoy_visitor");
 };
 
 /**
