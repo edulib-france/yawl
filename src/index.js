@@ -455,26 +455,14 @@ yawl.trackView = function (additionalProperties) {
   yawl.track("$view", properties);
 };
 
-// push events from queue
-try {
-  eventQueue = JSON.parse(getCookie("ahoy_events") || "[]");
-} catch (e) {
-  // do nothing
-}
-
-for (let i = 0; i < eventQueue.length; i++) {
-  trackEvent(eventQueue[i]);
-}
-
-yawl.start = function () {
-  createVisit();
-
+yawl.start = async function () {
+  await createVisit();
   yawl.start = function () {};
 };
 
-documentReady(function () {
+documentReady(async function () {
   if (config.startOnReady) {
-    yawl.start();
+    await yawl.start();
   }
 });
 
