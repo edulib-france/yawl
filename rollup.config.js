@@ -18,6 +18,12 @@ const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
 const input = "src/index.js";
 const outputName = "yawl";
 
+const bubleOptions = {
+  transforms: {
+    asyncAwait: false
+  }
+};
+
 export default [
   {
     input: input,
@@ -30,7 +36,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      buble()
+      buble(bubleOptions)
     ]
   },
   {
@@ -44,7 +50,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      buble(),
+      buble(bubleOptions),
       terser()
     ]
   },
@@ -56,7 +62,7 @@ export default [
       banner: banner
     },
     plugins: [
-      buble()
+      buble(bubleOptions)
     ]
   }
 ];
