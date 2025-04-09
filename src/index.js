@@ -389,7 +389,8 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  *  user_type: 'student',
  * });
  */
-yawl.track = function (name, properties = {}) {
+
+yawl.track = async function (name, properties = {}) {
   // generate unique id
   const event = Object.assign({}, properties, {
     name: name,
@@ -398,22 +399,22 @@ yawl.track = function (name, properties = {}) {
     js: true,
   });
 
-  yawl.ready(function () {
-    if (config.cookies && !yawl.getVisitId()) {
-      createVisit();
+  yawl.ready(async function () {
+    if (config.cookies && !(await yawl.getVisitId())) {
+      await createVisit();
     }
 
-    yawl.ready(function () {
+    yawl.ready(async function () {
       log(event);
 
-      event.visit_token = yawl.getVisitId();
-      event.visitor_token = yawl.getVisitorId();
+      event.visit_token = await yawl.getVisitId();
+      event.visitor_token = await yawl.getVisitorId();
 
       if (canTrackNow()) {
         trackEventNow(event);
       } else {
         eventQueue.push(event);
-        saveEventQueue();
+        await saveEventQueue();
 
         // wait in case navigating to reduce duplicate events
         setTimeout(function () {
