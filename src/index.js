@@ -1,4 +1,5 @@
 import { config } from "./config";
+import { initStorage } from "./cookies";
 import {
   canStringify,
   canTrackNow,
@@ -107,7 +108,7 @@ const yawl = window.yawl || {};
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
  */
-yawl.configure = function ({ apiKey, env = "staging" }) {
+yawl.configure = async function ({ apiKey, env = "staging" }) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
@@ -118,6 +119,8 @@ yawl.configure = function ({ apiKey, env = "staging" }) {
     );
     return;
   }
+  await initStorage();
+
   config.apiKey = apiKey;
   config.urlPrefix =
     env === "prod" ? "https://edulib.fr" : "https://staging.edulib.fr";
