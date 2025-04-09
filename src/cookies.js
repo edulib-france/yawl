@@ -24,6 +24,22 @@ export const storage = {
       return false;
     }
   },
+  async get(key) {
+    try {
+      const item = await localforage.getItem(key);
+      if (!item) return null;
+
+      if (item.expires && new Date().getTime() > item.expires) {
+        await this.remove(key);
+        return null;
+      }
+
+      return item.value;
+    } catch (error) {
+      console.error('Error getting storage item:', error);
+      return null;
+    }
+  },
 };
 
 export default {
