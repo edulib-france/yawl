@@ -163,9 +163,9 @@ yawl.ready = function (callback) {
   }
 };
 
-function saveEventQueue() {
+async function saveEventQueue() {
   if (config.cookies && canStringify) {
-    setCookie("ahoy_events", JSON.stringify(eventQueue), 1);
+    await setCookie("ahoy_events", JSON.stringify(eventQueue), 1);
   }
 }
 
