@@ -120,7 +120,7 @@ yawl.configure = async function ({ apiKey, env = "staging" }) {
     return;
   }
   await initStorage();
-
+  await initEventQueue();
   config.apiKey = apiKey;
   config.urlPrefix =
     env === "prod" ? "https://edulib.fr" : "https://staging.edulib.fr";
@@ -132,6 +132,20 @@ let isReady = false;
 const queue = [];
 
 let eventQueue = [];
+
+async function initEventQueue() {
+  try {
+    const storedEvents = await getCookie('ahoy_events');
+    eventQueue = JSON.parse(storedEvents || '[]');
+
+    // Process the queue after initialization
+    for (let i = 0; i < eventQueue.length; i++) {
+      trackEvent(eventQueue[i]);
+    }
+  } catch (e) {
+    // do nothing
+  }
+}
 
 function setReady() {
   let callback;
