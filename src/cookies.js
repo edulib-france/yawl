@@ -42,6 +42,15 @@ export const storage = {
   },
 };
 
+export async function initStorage() {
+  try {
+    await localforage.ready();
+  } catch (error) {
+    console.error('Failed to initialize storage:', error);
+    return null;
+  }
+}
+
 export default {
   set: async function (name, value, ttl) {
     return await storage.set(name, value, ttl);
