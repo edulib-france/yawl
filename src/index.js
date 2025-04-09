@@ -273,12 +273,12 @@ function eventProperties() {
   });
 }
 
-function createVisit() {
+async function createVisit() {
   isReady = false;
 
-  visitId = yawl.getVisitId();
-  visitorId = yawl.getVisitorId();
-  track = getCookie("ahoy_track");
+  visitId = await yawl.getVisitId();
+  visitorId = await yawl.getVisitorId();
+  track = await getCookie("ahoy_track");
 
   if (config.cookies === false || config.trackVisits === false) {
     log("Visit tracking disabled");
@@ -290,16 +290,16 @@ function createVisit() {
   } else {
     if (!visitId) {
       visitId = generateId();
-      setCookie("ahoy_visit", visitId, config.visitDuration);
+      await setCookie("ahoy_visit", visitId, config.visitDuration);
     }
 
-    // make sure cookies are enabled
-    if (getCookie("ahoy_visit")) {
+    const testVisit = await getCookie("ahoy_visit");
+    if (testVisit) {
       log("Visit started");
 
       if (!visitorId) {
         visitorId = generateId();
-        setCookie("ahoy_visitor", visitorId, config.visitorDuration);
+        await setCookie("ahoy_visitor", visitorId, config.visitorDuration);
       }
 
       const { os, version } = getOSAndVersion();
@@ -332,9 +332,9 @@ function createVisit() {
 
       log(data);
 
-      sendRequest(visitsUrl(), { visit: data }, function () {
+      sendRequest(visitsUrl(), { visit: data }, async function () {
         // wait until successful to destroy
-        destroyCookie("ahoy_track");
+        await destroyCookie("ahoy_track");
         setReady();
       });
     } else {
