@@ -20,7 +20,7 @@ export const storage = {
       return await localforage.setItem(key, item);
     } catch (error) {
       console.error('Error setting storage item:', error);
-      return false;
+      return null;
     }
   },
   async get(key) {
