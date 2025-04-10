@@ -9,7 +9,7 @@ localforage.config({
 });
 
 export const storage = {
-  async set(name, value, ttl) {
+  async set(key, value, ttl) {
     try {
       const item = {
         value,
@@ -17,20 +17,20 @@ export const storage = {
           ? new Date(new Date().getTime() + ttl * 60 * 1000).toUTCString()
           : null,
       };
-      await localforage.setItem(name, item);
+      await localforage.setItem(key, item);
       return true;
     } catch (error) {
       console.error('Error setting storage item:', error);
       return false;
     }
   },
-  async get(name) {
+  async get(key) {
     try {
-      const item = await localforage.getItem(name);
+      const item = await localforage.getItem(key);
       if (!item) return null;
 
       if (item.expires && new Date().getTime() > item.expires) {
-        await localforage.removeItem(name);
+        await localforage.removeItem(key);
         return null;
       }
 
