@@ -59,10 +59,10 @@ export async function initStorage() {
 }
 
 export default {
-  set: async function (name, value, ttl) {
-    return await storage.set(name, value, ttl);
+  set: async function (key, value, ttl) {
+    return await storage.set(key, value, ttl);
   },
-  get: async function (name) {
-    return await storage.get(name);
+  get: async function (key) {
+    return await storage.get(key);
   },
 };
