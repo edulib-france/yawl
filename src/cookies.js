@@ -17,8 +17,7 @@ export const storage = {
           ? new Date(Date.now() + ttl * 60 * 1000).toUTCString()
           : null,
       };
-      await localforage.setItem(key, item);
-      return true;
+      return await localforage.setItem(key, item);
     } catch (error) {
       console.error('Error setting storage item:', error);
       return false;
