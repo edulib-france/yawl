@@ -14,7 +14,7 @@ export const storage = {
       const item = {
         value,
         expires: ttl
-          ? new Date(new Date().getTime() + ttl * 60 * 1000).toUTCString()
+          ? new Date(Date.now() + ttl * 60 * 1000).toUTCString()
           : null,
       };
       await localforage.setItem(key, item);
