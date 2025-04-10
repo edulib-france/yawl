@@ -30,7 +30,7 @@ export const storage = {
       if (!item) return null;
 
       if (item.expires && new Date().getTime() > item.expires) {
-        await this.remove(key);
+        await localforage.removeItem(key);
         return null;
       }
 
