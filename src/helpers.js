@@ -10,7 +10,7 @@ export async function getCookie(name) {
 }
 
 export async function destroyCookie(name) {
-  return await Cookies.set(name, '', -1);
+  await Cookies.remove(name);
 }
 
 export function getBrowserInfo() {

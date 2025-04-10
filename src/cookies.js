@@ -42,6 +42,14 @@ export const storage = {
       return null;
     }
   },
+  async removeItem(key) {
+    try {
+      await localforage.removeItem(key);
+    } catch (error) {
+      console.error('Error removing storage item:', error);
+      return null;
+    }
+  },
 };
 
 export async function initStorage() {
@@ -64,5 +72,8 @@ export default {
   },
   get: async function (key) {
     return await storage.get(key);
+  },
+  remove: async function (key) {
+    return await storage.removeItem(key);
   },
 };
