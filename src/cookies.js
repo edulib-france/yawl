@@ -1,32 +1,79 @@
 // https://www.quirksmode.org/js/cookies.html
+import localforage from 'localforage';
 
-export default {
-  set: function (name, value, ttl, domain) {
-    let expires = "";
-    let cookieDomain = "";
-    if (ttl) {
-      const date = new Date();
-      date.setTime(date.getTime() + (ttl * 60 * 1000));
-      expires = "; expires=" + date.toGMTString();
+localforage.config({
+  name: 'YawlStorage',
+  storeName: 'analytics',
+  version: 1.0,
+  driver: localforage.INDEXEDDB,
+});
+
+export const storage = {
+  async set(key, value, ttl) {
+    try {
+      const item = {
+        value,
+        expires: ttl
+          ? new Date(Date.now() + ttl * 60 * 1000).toUTCString()
+          : null,
+      };
+      return await localforage.setItem(key, item);
+    } catch (error) {
+      console.error('Error setting storage item:', error);
+      return null;
     }
-    if (domain) {
-      cookieDomain = "; domain=" + domain;
-    }
-    document.cookie = name + "=" + escape(value) + expires + cookieDomain + "; path=/; samesite=lax";
   },
-  get: function (name) {
-    let i, c;
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (i = 0; i < ca.length; i++) {
-      c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1, c.length);
+  async get(key) {
+    try {
+      const item = await localforage.getItem(key);
+      if (!item) return null;
+
+      const now = new Date();
+      const expiryDate = new Date(item.expires);
+
+      if (now > expiryDate) {
+        await localforage.removeItem(key);
+        return null;
       }
-      if (c.indexOf(nameEQ) === 0) {
-        return unescape(c.substring(nameEQ.length, c.length));
-      }
+
+      return item.value;
+    } catch (error) {
+      console.error('Error getting storage item:', error);
+      return null;
     }
+  },
+  async removeItem(key) {
+    try {
+      await localforage.removeItem(key);
+    } catch (error) {
+      console.error('Error removing storage item:', error);
+      return null;
+    }
+  },
+};
+
+export async function initStorage() {
+  try {
+    await localforage.ready();
+    if (!localforage.supports(localforage.INDEXEDDB)) {
+      console.warn(
+        'IndexedDB is not supported in this environment. Yawl storage may not work properly.',
+      );
+    }
+  } catch (error) {
+    console.error('Failed to initialize storage:', error);
     return null;
   }
+}
+
+export default {
+  set: async function (key, value, ttl) {
+    return await storage.set(key, value, ttl);
+  },
+  get: async function (key) {
+    return await storage.get(key);
+  },
+  remove: async function (key) {
+    return await storage.removeItem(key);
+  },
 };

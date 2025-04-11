@@ -1,4 +1,5 @@
 import { config } from "./config";
+import { initStorage } from "./cookies";
 import {
   canStringify,
   canTrackNow,
@@ -107,7 +108,7 @@ const yawl = window.yawl || {};
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
  */
-yawl.configure = function ({ apiKey, env = "staging" }) {
+yawl.configure = async function ({ apiKey, env = "staging" }) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
@@ -118,6 +119,8 @@ yawl.configure = function ({ apiKey, env = "staging" }) {
     );
     return;
   }
+  await initStorage();
+  await initEventQueue();
   config.apiKey = apiKey;
   config.urlPrefix =
     env === "prod" ? "https://edulib.fr" : "https://staging.edulib.fr";
@@ -129,6 +132,20 @@ let isReady = false;
 const queue = [];
 
 let eventQueue = [];
+
+async function initEventQueue() {
+  try {
+    const storedEvents = await getCookie('ahoy_events');
+    eventQueue = JSON.parse(storedEvents || '[]');
+
+    // Process the queue after initialization
+    for (let i = 0; i < eventQueue.length; i++) {
+      trackEvent(eventQueue[i]);
+    }
+  } catch (e) {
+    // do nothing
+  }
+}
 
 function setReady() {
   let callback;
@@ -146,9 +163,9 @@ yawl.ready = function (callback) {
   }
 };
 
-function saveEventQueue() {
+async function saveEventQueue() {
   if (config.cookies && canStringify) {
-    setCookie("ahoy_events", JSON.stringify(eventQueue), 1);
+    await setCookie("ahoy_events", JSON.stringify(eventQueue), 1);
   }
 }
 
@@ -256,12 +273,12 @@ function eventProperties() {
   });
 }
 
-function createVisit() {
+async function createVisit() {
   isReady = false;
 
-  visitId = yawl.getVisitId();
-  visitorId = yawl.getVisitorId();
-  track = getCookie("ahoy_track");
+  visitId = await yawl.getVisitId();
+  visitorId = await yawl.getVisitorId();
+  track = await getCookie("ahoy_track");
 
   if (config.cookies === false || config.trackVisits === false) {
     log("Visit tracking disabled");
@@ -273,16 +290,16 @@ function createVisit() {
   } else {
     if (!visitId) {
       visitId = generateId();
-      setCookie("ahoy_visit", visitId, config.visitDuration);
+      await setCookie("ahoy_visit", visitId, config.visitDuration);
     }
 
-    // make sure cookies are enabled
-    if (getCookie("ahoy_visit")) {
+    const testVisit = await getCookie("ahoy_visit");
+    if (testVisit) {
       log("Visit started");
 
       if (!visitorId) {
         visitorId = generateId();
-        setCookie("ahoy_visitor", visitorId, config.visitorDuration);
+        await setCookie("ahoy_visitor", visitorId, config.visitorDuration);
       }
 
       const { os, version } = getOSAndVersion();
@@ -315,9 +332,9 @@ function createVisit() {
 
       log(data);
 
-      sendRequest(visitsUrl(), { visit: data }, function () {
+      sendRequest(visitsUrl(), { visit: data }, async function () {
         // wait until successful to destroy
-        destroyCookie("ahoy_track");
+        await destroyCookie("ahoy_track");
         setReady();
       });
     } else {
@@ -331,16 +348,16 @@ function createVisit() {
  * Retrieves the current visit token from cookies.
  * @returns {string|null} The visit token, or null if not set.
  */
-yawl.getVisitId = yawl.getVisitToken = function () {
-  return getCookie("ahoy_visit");
+yawl.getVisitId = yawl.getVisitToken = async function () {
+  return await getCookie("ahoy_visit");
 };
 
 /**
  * Retrieves the current visitor token from cookies.
  * @returns {string|null} The visitor token, or null if not set.
  */
-yawl.getVisitorId = yawl.getVisitorToken = function () {
-  return getCookie("ahoy_visitor");
+yawl.getVisitorId = yawl.getVisitorToken = async function () {
+  return await getCookie("ahoy_visitor");
 };
 
 /**
@@ -372,7 +389,8 @@ yawl.getVisitorId = yawl.getVisitorToken = function () {
  *  user_type: 'student',
  * });
  */
-yawl.track = function (name, properties = {}) {
+
+yawl.track = async function (name, properties = {}) {
   // generate unique id
   const event = Object.assign({}, properties, {
     name: name,
@@ -381,22 +399,22 @@ yawl.track = function (name, properties = {}) {
     js: true,
   });
 
-  yawl.ready(function () {
-    if (config.cookies && !yawl.getVisitId()) {
-      createVisit();
+  yawl.ready(async function () {
+    if (config.cookies && !(await yawl.getVisitId())) {
+      await createVisit();
     }
 
-    yawl.ready(function () {
+    yawl.ready(async function () {
       log(event);
 
-      event.visit_token = yawl.getVisitId();
-      event.visitor_token = yawl.getVisitorId();
+      event.visit_token = await yawl.getVisitId();
+      event.visitor_token = await yawl.getVisitorId();
 
       if (canTrackNow()) {
         trackEventNow(event);
       } else {
         eventQueue.push(event);
-        saveEventQueue();
+        await saveEventQueue();
 
         // wait in case navigating to reduce duplicate events
         setTimeout(function () {
@@ -437,26 +455,14 @@ yawl.trackView = function (additionalProperties) {
   yawl.track("$view", properties);
 };
 
-// push events from queue
-try {
-  eventQueue = JSON.parse(getCookie("ahoy_events") || "[]");
-} catch (e) {
-  // do nothing
-}
-
-for (let i = 0; i < eventQueue.length; i++) {
-  trackEvent(eventQueue[i]);
-}
-
-yawl.start = function () {
-  createVisit();
-
+yawl.start = async function () {
+  await createVisit();
   yawl.start = function () {};
 };
 
-documentReady(function () {
+documentReady(async function () {
   if (config.startOnReady) {
-    yawl.start();
+    await yawl.start();
   }
 });
 
