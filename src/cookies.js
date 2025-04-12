@@ -30,7 +30,7 @@ export const storage = {
 
       return item.value;
     } catch (error) {
-      console.error("Error getting storage item:", error);
+      console.warn("Error getting storage item:", error);
       return null;
     }
   },
@@ -38,7 +38,7 @@ export const storage = {
     try {
       await localforage.removeItem(key);
     } catch (error) {
-      console.error("Error removing storage item:", error);
+      console.warn("Error removing storage item:", error);
       return null;
     }
   },
@@ -54,7 +54,7 @@ export async function initStorage() {
     await localforage.ready();
     console.info(`Yawl storage is using ${localforage.driver()} driver`);
   } catch (error) {
-    console.warn("Failed to initialize Yawl storage:", error);
+    console.error("Failed to initialize Yawl storage:", error);
     return null;
   }
 }
