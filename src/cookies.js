@@ -1,12 +1,4 @@
-// https://www.quirksmode.org/js/cookies.html
-import localforage from 'localforage';
-
-localforage.config({
-  name: 'YawlStorage',
-  storeName: 'analytics',
-  version: 1.0,
-  driver: localforage.INDEXEDDB,
-});
+import localforage from "localforage";
 
 export const storage = {
   async set(key, value, ttl) {
@@ -19,7 +11,7 @@ export const storage = {
       };
       return await localforage.setItem(key, item);
     } catch (error) {
-      console.error('Error setting storage item:', error);
+      console.error("Error setting storage item:", error);
       return null;
     }
   },
@@ -38,7 +30,7 @@ export const storage = {
 
       return item.value;
     } catch (error) {
-      console.error('Error getting storage item:', error);
+      console.error("Error getting storage item:", error);
       return null;
     }
   },
@@ -46,7 +38,7 @@ export const storage = {
     try {
       await localforage.removeItem(key);
     } catch (error) {
-      console.error('Error removing storage item:', error);
+      console.error("Error removing storage item:", error);
       return null;
     }
   },
@@ -54,14 +46,15 @@ export const storage = {
 
 export async function initStorage() {
   try {
+    localforage.config({
+      name: "YawlStorage",
+      storeName: "analytics",
+      version: 1.0,
+    });
     await localforage.ready();
-    if (!localforage.supports(localforage.INDEXEDDB)) {
-      console.warn(
-        'IndexedDB is not supported in this environment. Yawl storage may not work properly.',
-      );
-    }
+    console.info(`Yawl storage is using ${localforage.driver()} driver`);
   } catch (error) {
-    console.error('Failed to initialize storage:', error);
+    console.warn("Failed to initialize Yawl storage:", error);
     return null;
   }
 }
