@@ -107,8 +107,32 @@ const yawl = window.yawl || {};
  * @param {Object} config - Configuration options for the Yawl library.
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
+ * @param {Persister=} config.persister - Optional custom storage implementation.
+ *
+ * @example
+ * // Using default storage (localforage)
+ * yawl.configure({ apiKey: 'your-api-key' });
+ *
+ * @example
+ * // Using custom storage
+ * yawl.configure({
+ *   apiKey: 'your-api-key',
+ *   persister: {
+ *     set: async (key, value) => {
+ *       await [customStorage].set(key, value);
+ *       return true;
+ *     },
+ *     get: async (key) => {
+ *       return await [customStorage].get(key);
+ *     },
+ *     remove: async (key) => {
+ *       await [customStorage].remove(key);
+ *       return true;
+ *     }
+ *   }
+ * });
  */
-yawl.configure = async function ({ apiKey, env = "staging" }) {
+yawl.configure = async function ({ apiKey, env = "staging", persister }) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
@@ -119,6 +143,11 @@ yawl.configure = async function ({ apiKey, env = "staging" }) {
     );
     return;
   }
+
+  if (persister) {
+    config.persister = persister;
+  }
+
   await initStorage();
   await initEventQueue();
   config.apiKey = apiKey;
