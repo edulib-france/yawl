@@ -100,6 +100,13 @@ function trackChanges(selector) {
 const yawl = window.yawl || {};
 
 /**
+ * @typedef {Object} Persister
+ * @property {function(string, string): Promise<boolean>} set - Sets a value in storage
+ * @property {function(string): Promise<string|null>} get - Gets a value from storage
+ * @property {function(string): Promise<boolean>} remove - Removes a value from storage
+ */
+
+/**
  * Configures the Yawl analytics library with your API key.
  * This function must be called before tracking events.
  * @function
