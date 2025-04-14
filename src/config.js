@@ -3,6 +3,7 @@ export const config = {
   visitsUrl: "/ahoy/visits",
   eventsUrl: "/ahoy/events",
   page: null,
+  persister: null,
   platform: "Web",
   useBeacon: true,
   startOnReady: true,
