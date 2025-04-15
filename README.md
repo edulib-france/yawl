@@ -34,7 +34,14 @@ npm install
 
 ## Configuration
 
-`yawl.configure({ apiKey: 'your_api_key' })` must be called before tracking events.
+`yawl.configure({ apiKey: 'your_api_key' })` must be called before tracking events. The configuration is asynchronous and returns a Promise. You can also specify the environment using the `env` property, which defaults to 'staging'.
+
+```javascript
+await yawl.configure({
+  apiKey: 'your_api_key',
+  env: 'prod', // optional, defaults to 'staging'
+});
+```
 
 ## Usage
 
@@ -48,17 +55,22 @@ After configuration, you can initialize Yawl and track events on your site. For 
     <script src="dist/yawl.js"></script>
     <script>
       // Initialize Yawl with your API key
-      yawl.configure({ apiKey: 'your_api_key' });
+      (async function() {
+        await yawl.configure({
+          apiKey: 'your_api_key',
+          env: 'prod' // optional, defaults to 'staging'
+        });
 
-      // Example of tracking a custom event
-      yawl.track('New Event', {
-        ean: 12323938432,
-        establishment_account_id: 456,
-        properties: {
-          key: 'value'
-        },
-        user_type: 'student',
-      });
+        // Example of tracking a custom event
+        await yawl.track('New Event', {
+          ean: 12323938432,
+          establishment_account_id: 456,
+          properties: {
+            key: 'value'
+          },
+          user_type: 'student',
+        });
+      })();
     </script>
   </head>
   <body>
@@ -69,7 +81,7 @@ After configuration, you can initialize Yawl and track events on your site. For 
 
 ### Events
 
-The `yawl.track` function is used to track custom events on your website. It sends event data to the analytics backend for processing.
+The `yawl.track` function is used to track custom events on your website. It sends event data to the analytics backend for processing. This is an asynchronous method that returns a Promise.
 
 Here are the parameters for the `track` event:
 
@@ -84,7 +96,7 @@ Here are the parameters for the `track` event:
 Example:
 
 ```javascript
-yawl.track('Event name', {
+await yawl.track('Event name', {
   ean: 12323938432,
   establishment_account_id: 456,
   properties: {
