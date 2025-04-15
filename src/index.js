@@ -108,7 +108,7 @@ const yawl = window.yawl || {};
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
  */
-yawl.configure = async function ({ apiKey, env = "staging" }) {
+yawl.configure = async function ({ apiKey, env = "prod" }) {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;

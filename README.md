@@ -34,12 +34,12 @@ npm install
 
 ## Configuration
 
-`yawl.configure({ apiKey: 'your_api_key' })` must be called before tracking events. The configuration is asynchronous and returns a Promise. You can also specify the environment using the `env` property, which defaults to 'staging'.
+`yawl.configure({ apiKey: 'your_api_key' })` must be called before tracking events. The configuration is asynchronous and returns a Promise. You can also specify the environment using the `env` property, which defaults to 'prod'.
 
 ```javascript
 await yawl.configure({
   apiKey: 'your_api_key',
-  env: 'prod', // optional, defaults to 'staging'
+  env: 'prod', // optional, defaults to 'prod'
 });
 ```
 
@@ -58,7 +58,7 @@ After configuration, you can initialize Yawl and track events on your site. For 
       (async function() {
         await yawl.configure({
           apiKey: 'your_api_key',
-          env: 'prod' // optional, defaults to 'staging'
+          env: 'prod' // optional, defaults to 'prod'
         });
 
         // Example of tracking a custom event
