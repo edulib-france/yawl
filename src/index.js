@@ -1,4 +1,4 @@
-import { config } from "./config";
+import { config, URLS } from "./config";
 import { initStorage } from "./cookies";
 import {
   canStringify,
@@ -122,8 +122,7 @@ yawl.configure = async function ({ apiKey, env = "prod" }) {
   await initStorage();
   await initEventQueue();
   config.apiKey = apiKey;
-  config.urlPrefix =
-    env === "prod" ? "https://www.edulib.fr" : "https://staging.edulib.fr";
+  config.urlPrefix = env === "prod" ? URLS.PROD : URLS.STAGING;
 };
 
 const $ = window.jQuery || window.Zepto || window.$;

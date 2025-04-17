@@ -1,5 +1,10 @@
+export const URLS = {
+  PROD: "https://www.edulib.fr",
+  STAGING: "https://staging.edulib.fr",
+};
+
 export const config = {
-  urlPrefix: "https://www.edulib.fr",
+  urlPrefix: URLS.PROD,
   visitsUrl: "/ahoy/visits",
   eventsUrl: "/ahoy/events",
   page: null,
