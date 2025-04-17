@@ -1,5 +1,5 @@
 export const config = {
-  urlPrefix: "https://staging.edulib.fr",
+  urlPrefix: "https://www.edulib.fr",
   visitsUrl: "/ahoy/visits",
   eventsUrl: "/ahoy/events",
   page: null,

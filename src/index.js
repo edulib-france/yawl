@@ -123,7 +123,7 @@ yawl.configure = async function ({ apiKey, env = "prod" }) {
   await initEventQueue();
   config.apiKey = apiKey;
   config.urlPrefix =
-    env === "prod" ? "https://edulib.fr" : "https://staging.edulib.fr";
+    env === "prod" ? "https://www.edulib.fr" : "https://staging.edulib.fr";
 };
 
 const $ = window.jQuery || window.Zepto || window.$;
