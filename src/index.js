@@ -200,7 +200,7 @@ function sendRequest(url, data, success) {
         }
       }
       xhr.onload = function () {
-        if (xhr.status === 200) {
+        if (xhr.status >= 200 && xhr.status < 300) {
           success();
         }
       };
@@ -435,7 +435,7 @@ yawl.track = async function (name, properties = {}) {
  * @memberof Yawl
  * @param {Object} [additionalProperties={}] - Additional properties to include in the page view event.
  */
-yawl.trackView = function (additionalProperties) {
+yawl.trackView = async function (additionalProperties) {
   const properties = {
     url: window.location.href,
     title: document.title,
@@ -451,7 +451,7 @@ yawl.trackView = function (additionalProperties) {
       }
     }
   }
-  yawl.track("$view", properties);
+  await yawl.track('$view', properties);
 };
 
 yawl.start = async function () {
