@@ -64,7 +64,7 @@ After configuration, you can initialize Yawl and track events on your site. For 
         // Example of tracking a custom event
         await yawl.track('New Event', {
           ean: 12323938432,
-          establishment_account_id: 456,
+          establishment_account_id: "456",
           properties: {
             key: 'value'
           },
@@ -88,7 +88,7 @@ Here are the parameters for the `track` event:
 | Parameter                  | Type    | Description                                 |
 | -------------------------- | ------- | ------------------------------------------- |
 | `ean`                      | Integer | The article ID associated with the event.   |
-| `establishment_account_id` | Integer | The establishment account ID.               |
+| `establishment_account_id` | String  | The establishment account ID.               |
 | `name`                     | String  | The name of the event (e.g., "click").      |
 | `properties`               | Object  | Additional properties related to the event. |
 | `user_type`                | String  | The type of user (e.g., "client", "admin"). |
@@ -98,7 +98,7 @@ Example:
 ```javascript
 await yawl.track('Event name', {
   ean: 12323938432,
-  establishment_account_id: 456,
+  establishment_account_id: "456",
   properties: {
     key: 'value',
   },
