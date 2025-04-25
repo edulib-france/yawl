@@ -200,7 +200,7 @@ function sendRequest(url, data, success) {
         }
       }
       xhr.onload = function () {
-        if (xhr.status === 201) {
+        if (xhr.status >= 200 && xhr.status < 300) {
           success();
         }
       };
