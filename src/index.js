@@ -134,8 +134,8 @@ let eventQueue = [];
 
 async function initEventQueue() {
   try {
-    const storedEvents = await getCookie('ahoy_events');
-    eventQueue = JSON.parse(storedEvents || '[]');
+    const storedEvents = await getCookie("ahoy_events");
+    eventQueue = JSON.parse(storedEvents || "[]");
 
     // Process the queue after initialization
     for (let i = 0; i < eventQueue.length; i++) {
@@ -362,7 +362,7 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
 /**
  * @typedef {Object} EventProperties
  * @property {number} [ean] - The article ID associated with the event.
- * @property {number} [establishment_account_id] - The establishment account ID.
+ * @property {string} [establishment_account_id] - The establishment account ID.
  * @property {string} [name] - The name of the event.
  * @property {Object} [properties] - Additional properties related to the event.
  * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
@@ -381,7 +381,7 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  * @example
  * yawl.track('New Event', {
  *  ean: 12323938432,
- *  establishment_account_id: 456,
+ *  establishment_account_id: "456",
  *  properties: {
  *    key: 'value'
  *  },
