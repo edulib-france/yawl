@@ -367,7 +367,7 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  * @property {number} [ean] - The article ID associated with the event.
  * @property {string} [establishment_account_id] - The establishment account ID.
  * @property {string} [name] - The name of the event.
- * @property {Object} [properties] - Additional properties related to the event.
+ * @property {Record<string, unknown>} [properties] - Additional properties related to the event.
  * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
  */
 
