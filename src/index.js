@@ -378,25 +378,24 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  *
  * @function
  * @memberof Yawl
- * @param {string} name - The name of the event to track.
  * @param {EventProperties} [properties={}] - Additional properties to associate with the event.
  * @returns {boolean} True if the event is successfully queued for tracking.
  *
  * @example
- * yawl.track('New Event', {
+ * yawl.track({
+ *  name: "event_name",
  *  ean: 12323938432,
  *  establishment_account_id: "456",
  *  properties: {
- *    key: 'value'
+ *    key: "value"
  *  },
- *  user_type: 'student',
+ *  user_type: "student",
  * });
  */
 
-yawl.track = async function (name, properties = {}) {
+yawl.track = async function (properties = {}) {
   // generate unique id
   const event = Object.assign({}, properties, {
-    name: name,
     time: new Date().toISOString(),
     id: generateId(),
     js: true,
