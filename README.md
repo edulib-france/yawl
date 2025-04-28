@@ -1,3 +1,5 @@
+![NPM Version](https://img.shields.io/npm/v/@edulib-france/yawl)
+
 # Yawl
 
 Yawl is a simple and powerful JavaScript analytics solution, derived from a fork of [ahoy.js](https://github.com/ankane/ahoy.js) by Edulib. It allows you to track visits and other custom events on your website.
@@ -12,6 +14,7 @@ Yawl is a simple and powerful JavaScript analytics solution, derived from a fork
   - [Configuration](#configuration)
   - [Usage](#usage)
     - [Events](#events)
+    - [Views](#views)
   - [Development](#development)
 
 ## Installation
@@ -38,8 +41,8 @@ npm install
 
 ```javascript
 await yawl.configure({
-  apiKey: 'your_api_key',
-  env: 'prod', // optional, defaults to 'prod'
+  apiKey: "your_api_key",
+  env: "prod", // optional, defaults to 'prod'
 });
 ```
 
@@ -98,13 +101,13 @@ Example:
 
 ```javascript
 await yawl.track({
-  name: 'event_name',
+  name: "event_name",
   ean: 12323938432,
-  establishment_account_id: '456',
+  establishment_account_id: "456",
   properties: {
-    key: 'value',
+    key: "value",
   },
-  user_type: 'student',
+  user_type: "student",
 });
 ```
 
@@ -130,11 +133,11 @@ await yawl.trackView();
 // Track a page view with additional properties
 await yawl.trackView({
   ean: 12323938432,
-  establishment_account_id: '456',
+  establishment_account_id: "456",
   properties: {
-    key: 'value',
+    key: "value",
   },
-  user_type: 'student',
+  user_type: "student",
 });
 ```
 
