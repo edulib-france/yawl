@@ -369,6 +369,10 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  */
 
 /**
+ * @typedef {Omit<EventProperties, 'name'>} ViewEventProperties
+ */
+
+/**
  * Tracks a custom event.
  * The event is queued and sent via the configured transport method.
  *
@@ -433,7 +437,7 @@ yawl.track = async function (name, properties = {}) {
  *
  * @function
  * @memberof Yawl
- * @param {EventProperties} [additionalProperties={}] - Additional properties to include in the page view event.
+ * @param {ViewEventProperties} [additionalProperties={}] - Additional properties to include in the page view event.
  */
 yawl.trackView = async function (additionalProperties) {
   const properties = {
