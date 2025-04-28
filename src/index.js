@@ -63,7 +63,8 @@ function trackClicks(selector) {
             .replace(/[\s\r\n]+/g, " ")
             .trim();
     properties.href = this.href;
-    yawl.track("$click", properties);
+    properties.name = "$click";
+    yawl.track(properties);
   });
 }
 
@@ -74,7 +75,8 @@ function trackSubmits(selector) {
   }
   onEvent("submit", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    yawl.track("$submit", properties);
+    properties.name = '$submit';
+    yawl.track(properties);
   });
 }
 
@@ -86,7 +88,8 @@ function trackChanges(selector) {
   }
   onEvent("change", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    yawl.track("$change", properties);
+    properties.name = "$change";
+    yawl.track(properties);
   });
 }
 
@@ -440,6 +443,7 @@ yawl.track = async function (properties = {}) {
  */
 yawl.trackView = async function (additionalProperties) {
   const properties = {
+    name: "$view",
     url: window.location.href,
     title: document.title,
     page: page(),
@@ -454,7 +458,7 @@ yawl.trackView = async function (additionalProperties) {
       }
     }
   }
-  await yawl.track('$view', properties);
+  await yawl.track(properties);
 };
 
 yawl.start = async function () {
