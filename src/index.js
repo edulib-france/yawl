@@ -63,7 +63,8 @@ function trackClicks(selector) {
             .replace(/[\s\r\n]+/g, " ")
             .trim();
     properties.href = this.href;
-    yawl.track("$click", properties);
+    properties.name = "$click";
+    yawl.track(properties);
   });
 }
 
@@ -74,7 +75,8 @@ function trackSubmits(selector) {
   }
   onEvent("submit", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    yawl.track("$submit", properties);
+    properties.name = '$submit';
+    yawl.track(properties);
   });
 }
 
@@ -86,7 +88,8 @@ function trackChanges(selector) {
   }
   onEvent("change", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    yawl.track("$change", properties);
+    properties.name = "$change";
+    yawl.track(properties);
   });
 }
 
@@ -364,7 +367,7 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  * @property {number} [ean] - The article ID associated with the event.
  * @property {string} [establishment_account_id] - The establishment account ID.
  * @property {string} [name] - The name of the event.
- * @property {Object} [properties] - Additional properties related to the event.
+ * @property {Record<string, unknown>} [properties] - Additional properties related to the event.
  * @property {string} [user_type] - The type of user (e.g. "client", "admin", etc.).
  */
 
@@ -378,25 +381,24 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  *
  * @function
  * @memberof Yawl
- * @param {string} name - The name of the event to track.
  * @param {EventProperties} [properties={}] - Additional properties to associate with the event.
  * @returns {boolean} True if the event is successfully queued for tracking.
  *
  * @example
- * yawl.track('New Event', {
+ * yawl.track({
+ *  name: "event_name",
  *  ean: 12323938432,
  *  establishment_account_id: "456",
  *  properties: {
- *    key: 'value'
+ *    key: "value"
  *  },
- *  user_type: 'student',
+ *  user_type: "student",
  * });
  */
 
-yawl.track = async function (name, properties = {}) {
+yawl.track = async function (properties = {}) {
   // generate unique id
   const event = Object.assign({}, properties, {
-    name: name,
     time: new Date().toISOString(),
     id: generateId(),
     js: true,
@@ -441,6 +443,7 @@ yawl.track = async function (name, properties = {}) {
  */
 yawl.trackView = async function (additionalProperties) {
   const properties = {
+    name: "$view",
     url: window.location.href,
     title: document.title,
     page: page(),
@@ -455,7 +458,7 @@ yawl.trackView = async function (additionalProperties) {
       }
     }
   }
-  await yawl.track('$view', properties);
+  await yawl.track(properties);
 };
 
 yawl.start = async function () {
