@@ -433,7 +433,7 @@ yawl.track = async function (name, properties = {}) {
  *
  * @function
  * @memberof Yawl
- * @param {Object} [additionalProperties={}] - Additional properties to include in the page view event.
+ * @param {EventProperties} [additionalProperties={}] - Additional properties to include in the page view event.
  */
 yawl.trackView = async function (additionalProperties) {
   const properties = {
