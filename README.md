@@ -106,6 +106,36 @@ await yawl.track('Event name', {
 });
 ```
 
+### Views
+
+The `yawl.trackView` function is used to track page views on your website. It automatically collects common page information like **URL, title**, and **page path**, and allows you to add custom properties. This is an asynchronous method that returns a Promise.
+
+Here are the parameters for the `trackView`:
+
+| Parameter                  | Type    | Description                                     |
+| -------------------------- | ------- | ----------------------------------------------- |
+| `ean`                      | Integer | The article ID associated with the page view.   |
+| `establishment_account_id` | String  | The establishment account ID.                   |
+| `properties`               | Object  | Additional properties related to the page view. |
+| `user_type`                | String  | The type of user (e.g., "client", "admin").     |
+
+Example:
+
+```javascript
+// Track a basic page view
+await yawl.trackView();
+
+// Track a page view with additional properties
+await yawl.trackView({
+  ean: 12323938432,
+  establishment_account_id: '456',
+  properties: {
+    key: 'value',
+  },
+  user_type: 'student',
+});
+```
+
 ## Development
 
 **Build Scripts**
