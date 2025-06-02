@@ -4,8 +4,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
 
-const banner = 
-`/*!
+const banner = `/*!
   * yawl v${pkg.version}
   * ${pkg.description}
   * ${pkg.repository.url}
@@ -20,8 +19,8 @@ const outputName = "yawl";
 
 const bubleOptions = {
   transforms: {
-    asyncAwait: false
-  }
+    asyncAwait: false,
+  },
 };
 
 export default [
@@ -31,13 +30,9 @@ export default [
       name: outputName,
       file: pkg.main,
       format: "umd",
-      banner: banner
+      banner: banner,
     },
-    plugins: [
-      resolve(),
-      commonjs(),
-      buble(bubleOptions)
-    ]
+    plugins: [resolve(), commonjs(), buble(bubleOptions)],
   },
   {
     input: input,
@@ -45,24 +40,17 @@ export default [
       name: outputName,
       file: "dist/yawl.min.js",
       format: "umd",
-      banner: minBanner
+      banner: minBanner,
     },
-    plugins: [
-      resolve(),
-      commonjs(),
-      buble(bubleOptions),
-      terser()
-    ]
+    plugins: [resolve(), commonjs(), buble(bubleOptions), terser()],
   },
   {
     input: input,
     output: {
       file: pkg.module,
       format: "es",
-      banner: banner
+      banner: banner,
     },
-    plugins: [
-      buble(bubleOptions)
-    ]
-  }
+    plugins: [buble(bubleOptions)],
+  },
 ];

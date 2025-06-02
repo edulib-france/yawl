@@ -60,13 +60,7 @@ export async function initStorage() {
 }
 
 export default {
-  set: async function (key, value, ttl) {
-    return await storage.set(key, value, ttl);
-  },
-  get: async function (key) {
-    return await storage.get(key);
-  },
-  remove: async function (key) {
-    return await storage.removeItem(key);
-  },
+  set: async (key, value, ttl) => await storage.set(key, value, ttl),
+  get: async (key) => await storage.get(key),
+  remove: async (key) => await storage.removeItem(key),
 };
