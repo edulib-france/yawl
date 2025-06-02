@@ -18,6 +18,7 @@ import {
   getDomainFromUrl,
   getOSAndVersion,
   getQueryParam,
+  getSecuredWindowLocationUrl,
   log,
   onEvent,
   page,
@@ -75,7 +76,7 @@ function trackSubmits(selector) {
   }
   onEvent("submit", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    properties.name = '$submit';
+    properties.name = "$submit";
     yawl.track(properties);
   });
 }
@@ -310,7 +311,7 @@ async function createVisit() {
         visit_token: visitId,
         visitor_token: visitorId,
         platform: config.platform,
-        landing_page: window.location.href,
+        landing_page: getSecuredWindowLocationUrl(),
         js: true,
         browser: getBrowserInfo(),
         user_agent: navigator.userAgent,
@@ -444,7 +445,7 @@ yawl.track = async function (properties = {}) {
 yawl.trackView = async function (additionalProperties) {
   const properties = {
     name: "$view",
-    url: window.location.href,
+    url: getSecuredWindowLocationUrl(),
     title: document.title,
     page: page(),
   };

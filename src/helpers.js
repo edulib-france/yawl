@@ -1,5 +1,5 @@
-import { config } from './config';
-import Cookies from './cookies';
+import { config } from "./config";
+import Cookies from "./cookies";
 
 export async function setCookie(name, value, ttl) {
   return await Cookies.set(name, value, ttl);
@@ -18,7 +18,10 @@ export function getBrowserInfo() {
   let browser = "Unknown";
   if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edge") === -1) {
     browser = "Chrome";
-  } else if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) {
+  } else if (
+    userAgent.indexOf("Safari") > -1 &&
+    userAgent.indexOf("Chrome") === -1
+  ) {
     browser = "Safari";
   } else if (userAgent.indexOf("Firefox") > -1) {
     browser = "Firefox";
@@ -45,7 +48,7 @@ export function getOSAndVersion() {
     os = "MacOS";
     const match = userAgent.match(/Mac OS X ([0-9_]+)/);
     if (match && match[1]) {
-      version = match[1].replace(/_/g, '.');
+      version = match[1].replace(/_/g, ".");
     }
   } else if (userAgent.indexOf("X11") > -1) {
     os = "UNIX";
@@ -66,9 +69,9 @@ export function generateId() {
     return window.crypto.randomUUID();
   }
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -106,7 +109,13 @@ function isEmpty(obj) {
 }
 
 export function canTrackNow() {
-  return (config.useBeacon || config.trackNow) && isEmpty(config.headers) && canStringify && typeof (window.navigator.sendBeacon) !== "undefined" && !config.withCredentials;
+  return (
+    (config.useBeacon || config.trackNow) &&
+    isEmpty(config.headers) &&
+    canStringify &&
+    typeof window.navigator.sendBeacon !== "undefined" &&
+    !config.withCredentials
+  );
 }
 
 export function csrfToken() {
@@ -125,7 +134,8 @@ export function CSRFProtection(xhr) {
 }
 
 export function matchesSelector(element, selector) {
-  const matches = element.matches ||
+  const matches =
+    element.matches ||
     element.matchesSelector ||
     element.mozMatchesSelector ||
     element.msMatchesSelector ||
@@ -167,10 +177,12 @@ export function onEvent(eventName, selector, callback) {
   });
 }
 
-
 // http://beeker.io/jquery-document-ready-equivalent-vanilla-javascript
 export function documentReady(callback) {
-  if (document.readyState === "interactive" || document.readyState === "complete") {
+  if (
+    document.readyState === "interactive" ||
+    document.readyState === "complete"
+  ) {
     setTimeout(callback, 0);
   } else {
     document.addEventListener("DOMContentLoaded", callback);
@@ -182,11 +194,11 @@ export function page() {
 }
 
 export function presence(str) {
-  return (str && str.length > 0) ? str : null;
+  return str && str.length > 0 ? str : null;
 }
 
 export function canStringify() {
-  return typeof (JSON) !== "undefined" && typeof (JSON.stringify) !== "undefined";
+  return typeof JSON !== "undefined" && typeof JSON.stringify !== "undefined";
 }
 
 export function cleanObject(obj) {
@@ -198,4 +210,22 @@ export function cleanObject(obj) {
     }
   }
   return obj;
+}
+
+export function getSecuredWindowLocationUrl() {
+  return redactSecureSearchParams(window.location.href);
+}
+
+function redactSecureSearchParams(urlString) {
+  try {
+    const url = new URL(urlString);
+    ["token", "access_token"].forEach((secureParam) => {
+      if (url.searchParams.has(secureParam))
+        url.searchParams.set(secureParam, "REDACTED");
+    });
+    return url.toString();
+  } catch (error) {
+    console.log("🚀 ===> ~ redactSecureSearchParams ~ error:", error);
+    return url;
+  }
 }
