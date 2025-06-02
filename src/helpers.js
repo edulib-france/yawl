@@ -226,6 +226,6 @@ function redactSecureSearchParams(urlString) {
     return url.toString();
   } catch (error) {
     console.log("🚀 ===> ~ redactSecureSearchParams ~ error:", error);
-    return url;
+    return urlString;
   }
 }
