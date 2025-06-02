@@ -1,11 +1,11 @@
-import { config, URLS } from "./config";
+import { URLS, config } from "./config";
 import { initStorage } from "./cookies";
 import {
+  CSRFProtection,
   canStringify,
   canTrackNow,
   cleanObject,
   csrfParam,
-  CSRFProtection,
   csrfToken,
   destroyCookie,
   documentReady,
@@ -75,7 +75,7 @@ function trackSubmits(selector) {
   }
   onEvent("submit", selector, function (e) {
     const properties = eventProperties.call(this, e);
-    properties.name = '$submit';
+    properties.name = "$submit";
     yawl.track(properties);
   });
 }
@@ -111,14 +111,14 @@ const yawl = window.yawl || {};
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
  */
-yawl.configure = async function ({ apiKey, env = "prod" }) {
+yawl.configure = async ({ apiKey, env = "prod" }) => {
   if (!apiKey) {
     console.error("Erreur: l'argument api_key est requis.");
     return;
   }
   if (typeof apiKey !== "string") {
     console.error(
-      "Erreur: l'argument api_key doit être une chaine de caractère"
+      "Erreur: l'argument api_key doit être une chaine de caractère",
     );
     return;
   }
@@ -157,7 +157,7 @@ function setReady() {
   isReady = true;
 }
 
-yawl.ready = function (callback) {
+yawl.ready = (callback) => {
   if (isReady) {
     callback();
   } else {
@@ -202,7 +202,7 @@ function sendRequest(url, data, success) {
           xhr.setRequestHeader(header, headers[header]);
         }
       }
-      xhr.onload = function () {
+      xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           success();
         }
@@ -227,8 +227,8 @@ function eventData(event) {
 }
 
 function trackEvent(event) {
-  yawl.ready(function () {
-    sendRequest(eventsUrl(), eventData(event), function () {
+  yawl.ready(() => {
+    sendRequest(eventsUrl(), eventData(event), () => {
       // remove from queue
       for (let i = 0; i < eventQueue.length; i++) {
         if (eventQueue[i].id === event.id) {
@@ -242,7 +242,7 @@ function trackEvent(event) {
 }
 
 function trackEventNow(event) {
-  yawl.ready(function () {
+  yawl.ready(() => {
     const data = eventData(event);
     const param = csrfParam();
     const token = csrfToken();
@@ -334,7 +334,7 @@ async function createVisit() {
 
       log(data);
 
-      sendRequest(visitsUrl(), { visit: data }, async function () {
+      sendRequest(visitsUrl(), { visit: data }, async () => {
         // wait until successful to destroy
         await destroyCookie("ahoy_track");
         setReady();
@@ -350,17 +350,15 @@ async function createVisit() {
  * Retrieves the current visit token from cookies.
  * @returns {string|null} The visit token, or null if not set.
  */
-yawl.getVisitId = yawl.getVisitToken = async function () {
-  return await getCookie("ahoy_visit");
-};
+yawl.getVisitId = yawl.getVisitToken = async () =>
+  await getCookie("ahoy_visit");
 
 /**
  * Retrieves the current visitor token from cookies.
  * @returns {string|null} The visitor token, or null if not set.
  */
-yawl.getVisitorId = yawl.getVisitorToken = async function () {
-  return await getCookie("ahoy_visitor");
-};
+yawl.getVisitorId = yawl.getVisitorToken = async () =>
+  await getCookie("ahoy_visitor");
 
 /**
  * @typedef {Object} EventProperties
@@ -396,7 +394,7 @@ yawl.getVisitorId = yawl.getVisitorToken = async function () {
  * });
  */
 
-yawl.track = async function (properties = {}) {
+yawl.track = async (properties = {}) => {
   // generate unique id
   const event = Object.assign({}, properties, {
     time: new Date().toISOString(),
@@ -404,12 +402,12 @@ yawl.track = async function (properties = {}) {
     js: true,
   });
 
-  yawl.ready(async function () {
+  yawl.ready(async () => {
     if (config.cookies && !(await yawl.getVisitId())) {
       await createVisit();
     }
 
-    yawl.ready(async function () {
+    yawl.ready(async () => {
       log(event);
 
       event.visit_token = await yawl.getVisitId();
@@ -422,7 +420,7 @@ yawl.track = async function (properties = {}) {
         await saveEventQueue();
 
         // wait in case navigating to reduce duplicate events
-        setTimeout(function () {
+        setTimeout(() => {
           trackEvent(event);
         }, 1000);
       }
@@ -441,7 +439,7 @@ yawl.track = async function (properties = {}) {
  * @memberof Yawl
  * @param {ViewEventProperties} [additionalProperties={}] - Additional properties to include in the page view event.
  */
-yawl.trackView = async function (additionalProperties) {
+yawl.trackView = async (additionalProperties) => {
   const properties = {
     name: "$view",
     url: window.location.href,
@@ -461,12 +459,12 @@ yawl.trackView = async function (additionalProperties) {
   await yawl.track(properties);
 };
 
-yawl.start = async function () {
+yawl.start = async () => {
   await createVisit();
-  yawl.start = function () {};
+  yawl.start = () => {};
 };
 
-documentReady(async function () {
+documentReady(async () => {
   if (config.startOnReady) {
     await yawl.start();
   }
