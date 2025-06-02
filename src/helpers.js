@@ -211,3 +211,21 @@ export function cleanObject(obj) {
   }
   return obj;
 }
+
+export function getSecuredWindowLocationUrl() {
+  return redactSecureSearchParams(window.location.href);
+}
+
+function redactSecureSearchParams(urlString) {
+  try {
+    const url = new URL(urlString);
+    ["token", "access_token"].forEach((secureParam) => {
+      if (url.searchParams.has(secureParam))
+        url.searchParams.set(secureParam, "REDACTED");
+    });
+    return url.toString();
+  } catch (error) {
+    console.log("🚀 ===> ~ redactSecureSearchParams ~ error:", error);
+    return urlString;
+  }
+}
