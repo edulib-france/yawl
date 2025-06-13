@@ -16,6 +16,7 @@ import {
   getCookie,
   getDeviceType,
   getDomainFromUrl,
+  getPlatform,
   getOSAndVersion,
   getQueryParam,
   getSecuredWindowLocationUrl,
@@ -310,7 +311,7 @@ async function createVisit() {
       const data = {
         visit_token: visitId,
         visitor_token: visitorId,
-        platform: config.platform,
+        platform: getPlatform(),
         landing_page: getSecuredWindowLocationUrl(),
         js: true,
         browser: getBrowserInfo(),

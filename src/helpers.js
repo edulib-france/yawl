@@ -33,6 +33,18 @@ export function getBrowserInfo() {
   return browser;
 }
 
+export function getPlatform() {
+  try {
+    if (typeof navigator !== "undefined" && navigator.userAgent) {
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.includes("electron")) return "Electron";
+    }
+    return config.platform;
+  } catch (error) {
+    return config.platform;
+  }
+}
+
 export function getOSAndVersion() {
   const userAgent = navigator.userAgent;
   let os = "Unknown";
