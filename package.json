@@ -25,29 +25,18 @@
     "publish:npm": "npm run build && npm publish",
     "publish:github": "npm run build && npm publish --registry=https://npm.pkg.github.com --scope=@edulib-france"
   },
-  "keywords": [
-    "analytics",
-    "locations",
-    "referral"
-  ],
-  "authors": [
-    "ankane",
-    "edulib-france"
-  ],
+  "keywords": ["analytics", "locations", "referral"],
+  "authors": ["ankane", "edulib-france"],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/edulib-france/yawl.git"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@rollup/plugin-buble": "^1.0.1",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^22.13.10",
     "eslint": "^9.14.0",
     "rollup": "^4.25.0",
