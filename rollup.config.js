@@ -9,17 +9,16 @@ const banner = `/*!
   * ${pkg.license} License
   */
 `;
-
-const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
-
 const input = "src/index.js";
 const outputName = "yawl";
 
-const bubleOptions = {
-  transforms: {
-    asyncAwait: false,
-  },
-};
+// TODO: Remove minified build if not needed
+// const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
+// const bubleOptions = {
+//   transforms: {
+//     asyncAwait: false,
+//   },
+// };
 
 export default [
   {
@@ -32,6 +31,7 @@ export default [
     },
     plugins: [resolve(), commonjs()],
   },
+  // TODO: Remove minified build if not needed
   // {
   //   input: input,
   //   output: {
