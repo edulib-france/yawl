@@ -34,7 +34,11 @@ export function getBrowserInfo() {
 }
 
 export function getPlatform() {
-  return navigator?.userAgent?.toLowerCase().includes("electron") ? "Electron" : "Web";
+  if (typeof navigator !== "undefined" && navigator.userAgent) {
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes("electron")) return "Electron";
+  }
+  return "Web";
 }
 
 export function getOSAndVersion() {
