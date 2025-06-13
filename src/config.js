@@ -1,3 +1,5 @@
+import { getPlatform } from "./helpers";
+
 export const URLS = {
   PROD: "https://www.edulib.fr",
   STAGING: "https://staging.edulib.fr",
@@ -8,7 +10,7 @@ export const config = {
   visitsUrl: "/ahoy/visits",
   eventsUrl: "/ahoy/events",
   page: null,
-  platform: "Web",
+  platform: getPlatform(),
   useBeacon: true,
   startOnReady: true,
   trackVisits: true,
