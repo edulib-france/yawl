@@ -33,6 +33,12 @@ export function getBrowserInfo() {
   return browser;
 }
 
+export function getPlatform() {
+  return navigator?.userAgent?.toLowerCase().includes("electron")
+    ? "Electron"
+    : "Web";
+}
+
 export function getOSAndVersion() {
   const userAgent = navigator.userAgent;
   let os = "Unknown";
