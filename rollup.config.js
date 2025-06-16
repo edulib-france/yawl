@@ -1,7 +1,5 @@
-import buble from "@rollup/plugin-buble";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
-import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
 
 const banner = `/*!
@@ -11,17 +9,16 @@ const banner = `/*!
   * ${pkg.license} License
   */
 `;
-
-const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
-
 const input = "src/index.js";
 const outputName = "yawl";
 
-const bubleOptions = {
-  transforms: {
-    asyncAwait: false,
-  },
-};
+// TODO: Remove minified build if not needed
+// const minBanner = `/*! yawl v${pkg.version} | ${pkg.license} License */`;
+// const bubleOptions = {
+//   transforms: {
+//     asyncAwait: false,
+//   },
+// };
 
 export default [
   {
@@ -32,18 +29,19 @@ export default [
       format: "umd",
       banner: banner,
     },
-    plugins: [resolve(), commonjs(), buble(bubleOptions)],
+    plugins: [resolve(), commonjs()],
   },
-  {
-    input: input,
-    output: {
-      name: outputName,
-      file: "dist/yawl.min.js",
-      format: "umd",
-      banner: minBanner,
-    },
-    plugins: [resolve(), commonjs(), buble(bubleOptions), terser()],
-  },
+  // TODO: Remove minified build if not needed
+  // {
+  //   input: input,
+  //   output: {
+  //     name: outputName,
+  //     file: "dist/yawl.min.js",
+  //     format: "umd",
+  //     banner: minBanner,
+  //   },
+  //   plugins: [resolve(), terser()],
+  // },
   {
     input: input,
     output: {
@@ -51,6 +49,6 @@ export default [
       format: "es",
       banner: banner,
     },
-    plugins: [buble(bubleOptions)],
+    plugins: [],
   },
 ];
