@@ -461,6 +461,7 @@ yawl.trackView = async (additionalProperties) => {
 };
 
 yawl.start = async () => {
+  if (!config.apiKey) return;
   await createVisit();
   yawl.start = () => {};
 };
