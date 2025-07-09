@@ -461,14 +461,17 @@ yawl.trackView = async (additionalProperties) => {
 };
 
 yawl.start = async () => {
-  if (!config.apiKey) return;
   await createVisit();
   yawl.start = () => {};
 };
 
 documentReady(async () => {
-  if (config.startOnReady) {
+  if (config.startOnReady && config.apiKey) {
     await yawl.start();
+  } else if (config.startOnReady && !config.apiKey) {
+    console.warn(
+      "Yawl SDK: Auto-start disabled because SDK is not configured. Call yawl.configure({ apiKey: 'your-key' }) then yawl.start() manually.",
+    );
   }
 });
 
