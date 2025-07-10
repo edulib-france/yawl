@@ -127,6 +127,13 @@ yawl.configure = async ({ apiKey, env = "prod" }) => {
   await initEventQueue();
   config.apiKey = apiKey;
   config.urlPrefix = env === "prod" ? URLS.PROD : URLS.STAGING;
+
+  // Starting Yawl SDK
+  documentReady(async () => {
+    if (config.startOnReady) {
+      await yawl.start();
+    }
+  });
 };
 
 const $ = window.jQuery || window.Zepto || window.$;
@@ -464,11 +471,5 @@ yawl.start = async () => {
   await createVisit();
   yawl.start = () => {};
 };
-
-documentReady(async () => {
-  if (config.startOnReady) {
-    await yawl.start();
-  }
-});
 
 export default yawl;
