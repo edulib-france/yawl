@@ -127,6 +127,11 @@ yawl.configure = async ({ apiKey, env = "prod" }) => {
   await initEventQueue();
   config.apiKey = apiKey;
   config.urlPrefix = env === "prod" ? URLS.PROD : URLS.STAGING;
+
+  // Starting Yawl SDK
+  documentReady(async () => {
+    await yawl.start();
+  });
 };
 
 const $ = window.jQuery || window.Zepto || window.$;
@@ -464,15 +469,5 @@ yawl.start = async () => {
   await createVisit();
   yawl.start = () => {};
 };
-
-documentReady(async () => {
-  if (config.startOnReady && config.apiKey) {
-    await yawl.start();
-  } else if (config.startOnReady && !config.apiKey) {
-    console.warn(
-      "Yawl SDK: Auto-start disabled because SDK is not configured. Call yawl.configure({ apiKey: 'your-key' }) then yawl.start() manually.",
-    );
-  }
-});
 
 export default yawl;
