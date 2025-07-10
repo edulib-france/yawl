@@ -130,7 +130,9 @@ yawl.configure = async ({ apiKey, env = "prod" }) => {
 
   // Starting Yawl SDK
   documentReady(async () => {
-    await yawl.start();
+    if (config.startOnReady) {
+      await yawl.start();
+    }
   });
 };
 
