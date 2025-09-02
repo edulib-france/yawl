@@ -1,5 +1,7 @@
 ![NPM Version](https://img.shields.io/npm/v/@edulib-france/yawl)
 
+[Renovate dashboard](https://developer.mend.io/github/edulib-france/yawl)
+
 # Yawl
 
 Yawl is a simple and powerful JavaScript analytics solution, derived from a fork of [ahoy.js](https://github.com/ankane/ahoy.js) by Edulib. It allows you to track visits and other custom events on your website.
