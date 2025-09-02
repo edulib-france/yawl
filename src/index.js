@@ -1,4 +1,4 @@
-import { URLS, config } from "./config";
+import { config, URLS } from "./config";
 import { initStorage } from "./cookies";
 import {
   CSRFProtection,

@@ -20,8 +20,8 @@
   },
   "scripts": {
     "build": "tsc && rollup -c",
-    "lint": "eslint src; biome check src",
-    "format": "biome format src --write",
+    "lint": "eslint src; biome ci",
+    "lint:fix": "eslint src; biome check --write",
     "publish:npm": "npm run build && npm publish",
     "publish:github": "npm run build && npm publish --registry=https://npm.pkg.github.com --scope=@edulib-france"
   },
