@@ -20,8 +20,8 @@
   },
   "scripts": {
     "build": "tsc && rollup -c",
-    "lint": "eslint src; biome check src",
-    "format": "biome format src --write",
+    "lint": "eslint src; biome ci",
+    "lint:fix": "eslint src; biome format --write",
     "publish:npm": "npm run build && npm publish",
     "publish:github": "npm run build && npm publish --registry=https://npm.pkg.github.com --scope=@edulib-france"
   },
@@ -43,7 +43,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.2.2",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@types/node": "^22.13.10",
