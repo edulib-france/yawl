@@ -1,13 +1,13 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@7.1.0
+  node: circleci/node@7.1.1
 
 jobs:
   build:
     resource_class: small
     docker:
-      - image: cimg/node:22.14.0
+      - image: cimg/node:22.19.0
     steps:
       - checkout
       - node/install-packages
