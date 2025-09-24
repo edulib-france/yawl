@@ -92,7 +92,7 @@ export function getDomainFromUrl(url) {
 }
 
 export function log(message) {
-  if (getCookie("ahoy_debug")) {
+  if (config.debug) {
     window.console.log(message);
   }
 }
@@ -231,7 +231,7 @@ function redactSecureSearchParams(urlString) {
     });
     return url.toString();
   } catch (error) {
-    console.log("🚀 ===> ~ redactSecureSearchParams ~ error:", error);
+    console.error("redactSecureSearchParams ~ error:", error);
     return urlString;
   }
 }

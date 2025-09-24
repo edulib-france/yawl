@@ -1,4 +1,5 @@
 import localforage from "localforage";
+import { log } from "./helpers";
 
 export const storage = {
   async set(key, value, ttl) {
@@ -52,7 +53,7 @@ export async function initStorage() {
       version: 1.0,
     });
     await localforage.ready();
-    console.info(`Yawl storage is using ${localforage.driver()} driver`);
+    log(`Yawl storage is using ${localforage.driver()} driver`);
   } catch (error) {
     console.error("Failed to initialize Yawl storage:", error);
     return null;

@@ -21,4 +21,5 @@ export const config = {
   withCredentials: false,
   visitDuration: 4 * 60, // default 4 hours
   visitorDuration: 2 * 365 * 24 * 60, // default 2 years
+  debug: false
 };
