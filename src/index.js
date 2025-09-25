@@ -111,6 +111,7 @@ const yawl = window.yawl || {};
  * @param {Object} config - Configuration options for the Yawl library.
  * @param {string} config.apiKey - The API key for initializing the analytics tracking.
  * @param {'prod' | 'staging'=} config.env - The API key for initializing the analytics tracking.
+ * @param {boolean=} config.debug - Enable debug mode for verbose logging.
  */
 yawl.configure = async ({ apiKey, env = "prod", debug = false }) => {
   if (!apiKey) {
