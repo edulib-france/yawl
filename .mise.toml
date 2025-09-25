@@ -1,0 +1,7 @@
+# use .mise.local.toml to override settings locally
+[env]
+GITHUB_PACKAGES_TOKEN = ""
+NPM_TOKEN = ""
+
+[tools]
+node = "22.20.0"
