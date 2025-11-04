@@ -305,8 +305,7 @@ async function createVisit() {
       await setCookie("ahoy_visit", visitId, config.visitDuration);
     }
 
-    const testVisit = await getCookie("ahoy_visit");
-    if (testVisit) {
+    if (await getCookie("ahoy_visit")) {
       log("Visit started");
 
       if (!visitorId) {
