@@ -305,8 +305,7 @@ async function createVisit() {
       await setCookie("ahoy_visit", visitId, config.visitDuration);
     }
 
-    const testVisit = await getCookie("ahoy_visit");
-    if (testVisit) {
+    if (await getCookie("ahoy_visit")) {
       log("Visit started");
 
       if (!visitorId) {
@@ -450,23 +449,26 @@ yawl.track = async (properties = {}) => {
  * @param {ViewEventProperties} [additionalProperties={}] - Additional properties to include in the page view event.
  */
 yawl.trackView = async (additionalProperties) => {
-  const properties = {
+  const viewEvent = {
     name: "$view",
-    url: getSecuredWindowLocationUrl(),
-    title: document.title,
-    page: page(),
+    properties: {
+      url: getSecuredWindowLocationUrl(),
+      title: document.title,
+      page: page(),
+      referrer: document.referrer,
+    },
   };
 
   if (additionalProperties) {
-    for (const propName in additionalProperties) {
-      if (
-        Object.prototype.hasOwnProperty.call(additionalProperties, propName)
-      ) {
-        properties[propName] = additionalProperties[propName];
+    for (const [propName, value] of Object.entries(additionalProperties)) {
+      if (propName === "properties") {
+        viewEvent[propName] = { ...viewEvent.properties, ...value };
+      } else {
+        viewEvent[propName] = value;
       }
     }
   }
-  await yawl.track(properties);
+  await yawl.track(viewEvent);
 };
 
 yawl.start = async () => {
