@@ -455,6 +455,7 @@ yawl.trackView = async (additionalProperties) => {
       url: getSecuredWindowLocationUrl(),
       title: document.title,
       page: page(),
+      referrer: document.referrer,
     },
   };
 
