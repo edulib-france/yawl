@@ -43,8 +43,8 @@ npm install
 
 ```javascript
 await yawl.configure({
-  apiKey: "your_api_key",
-  env: "prod", // optional, defaults to 'prod'
+  apiKey: 'your_api_key',
+  env: 'prod', // optional, defaults to 'prod'
 });
 ```
 
@@ -103,13 +103,13 @@ Example:
 
 ```javascript
 await yawl.track({
-  name: "event_name",
+  name: 'event_name',
   ean: 12323938432,
-  establishment_account_id: "456",
+  establishment_account_id: '456',
   properties: {
-    key: "value",
+    key: 'value',
   },
-  user_type: "student",
+  user_type: 'student',
 });
 ```
 
@@ -135,13 +135,12 @@ await yawl.trackView();
 // Track a page view with additional properties
 await yawl.trackView({
   ean: 12323938432,
-  establishment_account_id: "456",
+  establishment_account_id: '456',
   properties: {
-    key: "value",
+    key: 'value',
   },
-  user_type: "student",
+  user_type: 'student',
 });
-
 ```
 
 ### Reset Visit
