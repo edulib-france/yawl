@@ -356,6 +356,33 @@ async function createVisit() {
 }
 
 /**
+ * Resets the current visit and visitor tracking session.
+ *
+ * @function
+ * @memberof Yawl
+ * @returns {Promise<void>}
+ *
+ * @example
+ * await yawl.resetVisit();
+ */
+yawl.resetVisit = async () => {
+  log("Resetting Yawl tracking...");
+
+  try {
+    await destroyCookie("ahoy_visit");
+    await destroyCookie("ahoy_visitor");
+
+    visitId = null;
+    visitorId = null;
+    isReady = false;
+
+    log("Yawl tracking reset complete");
+  } catch (error) {
+    console.error("resetVisit ~ error:", error);
+  }
+};
+
+/**
  * Retrieves the current visit token from cookies.
  * @returns {string|null} The visit token, or null if not set.
  */
