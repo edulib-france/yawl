@@ -43,8 +43,8 @@ npm install
 
 ```javascript
 await yawl.configure({
-  apiKey: "your_api_key",
-  env: "prod", // optional, defaults to 'prod'
+  apiKey: 'your_api_key',
+  env: 'prod', // optional, defaults to 'prod'
 });
 ```
 
@@ -103,13 +103,13 @@ Example:
 
 ```javascript
 await yawl.track({
-  name: "event_name",
+  name: 'event_name',
   ean: 12323938432,
-  establishment_account_id: "456",
+  establishment_account_id: '456',
   properties: {
-    key: "value",
+    key: 'value',
   },
-  user_type: "student",
+  user_type: 'student',
 });
 ```
 
@@ -135,12 +135,24 @@ await yawl.trackView();
 // Track a page view with additional properties
 await yawl.trackView({
   ean: 12323938432,
-  establishment_account_id: "456",
+  establishment_account_id: '456',
   properties: {
-    key: "value",
+    key: 'value',
   },
-  user_type: "student",
+  user_type: 'student',
 });
+```
+
+### Reset Visit
+
+The `yawl.resetVisit` function allows you to reset the current visit and visitor tracking session. This is useful when a user logs out of your application, ensuring that their analytics session is properly terminated and prepare for a new one.
+
+**Note:** The reset includes a 500ms delay to ensure pending events are sent before the session ends. A new visit is automatically created after the reset.
+
+Example:
+
+```javascript
+await yawl.resetVisit();
 ```
 
 ## Development
