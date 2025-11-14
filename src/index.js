@@ -379,6 +379,10 @@ yawl.resetVisit = async () => {
     log("Yawl tracking reset complete");
   } catch (error) {
     console.error("resetVisit ~ error:", error);
+  } finally {
+    visitId = null;
+    visitorId = null;
+    isReady = false;
   }
 };
 
