@@ -368,22 +368,22 @@ async function createVisit() {
 yawl.resetVisit = async () => {
   log("Resetting Yawl tracking...");
 
-  try {
-    await destroyCookie("ahoy_visit");
-    await destroyCookie("ahoy_visitor");
+  setTimeout(async () => {
+    try {
+      await destroyCookie("ahoy_visit");
+      await destroyCookie("ahoy_visitor");
 
-    visitId = null;
-    visitorId = null;
-    isReady = false;
+      visitId = null;
+      visitorId = null;
+      isReady = false;
 
-    log("Yawl tracking reset complete");
-  } catch (error) {
-    console.error("resetVisit ~ error:", error);
-  } finally {
-    visitId = null;
-    visitorId = null;
-    isReady = false;
-  }
+      await createVisit();
+    } catch (error) {
+      console.error("resetVisit ~ error:", error);
+    }
+  }, 500);
+
+  log("Yawl tracking reset complete");
 };
 
 /**
