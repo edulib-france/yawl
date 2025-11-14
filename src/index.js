@@ -358,6 +358,20 @@ async function createVisit() {
 /**
  * Resets the current visit and visitor tracking session.
  *
+ * Implementation note:
+ * The reset operation is delayed by 500ms using setTimeout to ensure that any
+ * pending events are processed and sent with the current visit tokens BEFORE
+ * the reset occurs. Without this delay, events queued via yawl.ready() would
+ * execute after the reset, causing them to be lost or sent with incorrect visit tokens
+ *
+ * The 500ms delay allows:
+ * 1. Pending yawl.ready() callbacks to complete
+ * 2. Queued events to be sent with the correct (old) visit tokens
+ * 3. Clean transition between sessions without data loss
+ *
+ * After the reset completes, createVisit() is automatically called to
+ * initialize a new visit, ensuring the SDK is ready for the next tracking event.
+ *
  * @function
  * @memberof Yawl
  * @returns {Promise<void>}
