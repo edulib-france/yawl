@@ -145,9 +145,9 @@ await yawl.trackView({
 
 ### Reset Visit
 
-The `yawl.resetVisit` function allows you to reset the current visit and visitor tracking session. This is useful when a user logs out of your application, ensuring that their analytics session is properly terminated and a fresh session will start on their next interaction.
+The `yawl.resetVisit` function allows you to reset the current visit and visitor tracking session. This is useful when a user logs out of your application, ensuring that their analytics session is properly terminated and prepare for a new one.
 
-**Note:** After calling `resetVisit()`, the next call to `yawl.track()` or `yawl.trackView()` will automatically create a new visit with fresh tokens.
+**Note:** The reset includes a 500ms delay to ensure pending events are sent before the session ends. A new visit is automatically created after the reset.
 
 Example:
 
