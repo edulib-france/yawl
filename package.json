@@ -46,7 +46,7 @@
     "@biomejs/biome": "2.3.11",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@types/node": "^24.10.7",
+    "@types/node": "^24.10.8",
     "eslint": "^9.39.2",
     "rollup": "^4.55.1",
     "typescript": "^5.9.3"
