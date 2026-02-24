@@ -4,4 +4,4 @@ GITHUB_PACKAGES_TOKEN = ""
 NPM_TOKEN = ""
 
 [tools]
-node = "24.13.1"
+node = "24.14.0"
