@@ -50,7 +50,7 @@
     "@types/node": "^24.13.3",
     "eslint": "^10.8.0",
     "globals": "^17.8.0",
-    "rollup": "^4.62.3",
+    "rollup": "^4.62.4",
     "typescript": "^7.0.2"
   },
   "dependencies": {
