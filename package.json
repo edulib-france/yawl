@@ -48,7 +48,7 @@
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^24.13.3",
-    "eslint": "^10.8.0",
+    "eslint": "^10.8.1",
     "globals": "^17.9.0",
     "rollup": "^4.62.4",
     "typescript": "^7.0.2"
