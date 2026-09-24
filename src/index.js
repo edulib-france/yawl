@@ -449,12 +449,8 @@ yawl.getVisitorId = yawl.getVisitorToken = async () =>
  */
 
 yawl.track = async (properties = {}) => {
-  // generate unique id
-  const event = Object.assign({}, properties, {
-    time: new Date().toISOString(),
-    id: generateId(),
-    js: true,
-  });
+  const trackedAt = Date.now();
+  const id = generateId();
 
   yawl.ready(async () => {
     if (config.cookies && !(await yawl.getVisitId())) {
@@ -462,10 +458,26 @@ yawl.track = async (properties = {}) => {
     }
 
     yawl.ready(async () => {
-      log(event);
+      const visitToken = await yawl.getVisitId();
+      const visitorToken = await yawl.getVisitorId();
 
-      event.visit_token = await yawl.getVisitId();
-      event.visitor_token = await yawl.getVisitorId();
+      // The time is stamped after the tokens resolve so an event can never predate its
+      // visit. A call left pending longer than a visit can last (e.g. a suspended tab)
+      // is dropped rather than attached to a visit that started after it.
+      const now = Date.now();
+      if (now - trackedAt > config.visitDuration * 60 * 1000) {
+        log("Dropping event left pending longer than a visit can last");
+        return;
+      }
+
+      const event = Object.assign({}, properties, {
+        time: new Date(now).toISOString(),
+        id,
+        js: true,
+        visit_token: visitToken,
+        visitor_token: visitorToken,
+      });
+      log(event);
 
       if (canTrackNow()) {
         trackEventNow(event);
