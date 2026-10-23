@@ -1,16 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":prNotPending", ":prHourlyLimitNone"],
-  "packageRules": [
-    {
-      "matchDatasources": ["npm"],
-      "rangeStrategy": "bump"
-    },
-    {
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true,
-      "automergeType": "branch"
-    }
-  ]
+  "extends": ["github>edulib-france/renovate-config"]
 }
-
